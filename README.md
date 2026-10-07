@@ -1,3 +1,3 @@
-# CareNest updates
+# ClinicNest updates
 
-Signed update files for installed copies of CareNest (`stable/`, `beta/`). Published by the release workflow; nothing here is edited by hand.
+Signed update files for installed copies of ClinicNest (`stable/`, `beta/`). Published by the release workflow; nothing here is edited by hand.
