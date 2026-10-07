@@ -1,0 +1,68 @@
+CARENEST COMMUNITY EDITION - LICENCE TERMS
+Version 1.0 - 7 October 2026
+
+Please read these terms. By installing or using CareNest Community Edition ("CareNest", "the software") you accept them for yourself and for your clinic. If you do not accept them, do not install or use the software.
+
+In these terms "we" and "us" mean the publisher of CareNest, and "you" means the person or clinic that installs or uses the software.
+
+1. WHAT YOU MAY DO
+
+CareNest Community Edition is free of charge. You may install it and use it in the clinics you run, for your own practice, on any number of computers and for any number of users in those clinics. You may make backup copies of the software and of your data.
+
+2. WHAT YOU MAY NOT DO
+
+You may not sell, rent, lend or sub-license the software, pass on copies of it, or offer it to others as a hosted or managed service. Other clinics can get their own copy from the official CareNest download page.
+
+You may not change the software, take it apart, or try to obtain its source code, except where the law gives you that right and it cannot be excluded.
+
+You may not remove or hide the CareNest name, the licence terms or any notices in the software, or use the CareNest name in a way that suggests we endorse you or your services.
+
+3. OWNERSHIP
+
+The software is licensed to you, not sold. It remains our property. CareNest includes open-source components made by others; those components are provided under their own licences, and for those components their licences apply.
+
+4. YOUR DATA AND YOUR RESPONSIBILITIES
+
+CareNest runs on your own computer. The patient records you enter are stored on that computer and in the backups you make. We do not receive, see or store your patient records.
+
+You alone are responsible for:
+- collecting and using patient information lawfully, including any consent that is needed;
+- keeping the records confidential: user accounts, passwords, and who can reach the computer and the clinic's network;
+- following the laws and professional rules on medical records and personal data that apply to you;
+- keeping backups, storing copies away from the computer, and checking that they can be restored.
+
+5. SMS AND WHATSAPP MESSAGES
+
+If you switch on reminders by SMS or WhatsApp, the messages are sent through your own accounts with your own providers. You are responsible for those accounts and their registration, for the content of the messages, for the consent of the people who receive them, and for the providers' charges.
+
+6. AUTOMATIC UPDATES
+
+When the computer has internet access, CareNest looks for new versions on our update site and installs them by itself. An update can change, add or remove features. Looking for and downloading updates does not send patient records to us.
+
+7. NOT A SUBSTITUTE FOR PROFESSIONAL JUDGEMENT
+
+CareNest is a tool for keeping records. It is not a medical device and does not give medical advice. The lists of diagnoses and medicines, the suggested doses, the forms, the calculations and the printed documents are aids only and may contain mistakes. The treating clinician is responsible for every clinical decision, every prescription and every document, and must check them before use.
+
+8. NO WARRANTY
+
+The software is provided "as is", free of charge, without any warranty of any kind, express or implied, including warranties of fitness for a particular purpose, of accuracy, or that it will work without interruption or error. We are not obliged to provide support, corrections or new versions, and we may stop offering the software or its updates at any time.
+
+9. LIMIT OF LIABILITY
+
+To the fullest extent the law allows, we are not liable for any loss or damage arising from the use of the software or from not being able to use it. This includes loss or corruption of data, loss of income, interruption of your practice, claims by patients or other persons, and any indirect or consequential loss. Where liability cannot be excluded, it is limited to the amount you paid us for the software. Nothing in these terms excludes liability that cannot be excluded by law.
+
+10. OTHER EDITIONS AND SERVICES
+
+We may offer other editions of CareNest, or services such as support, with other features and on separate terms, which may be paid. The features of the Community Edition may change over time.
+
+11. ENDING THE LICENCE
+
+You may stop using the software at any time. This licence ends automatically if you do not keep to these terms; you must then stop using the software. Your data remains yours: you may keep your database and your backups.
+
+12. CHANGES TO THESE TERMS
+
+We may change these terms for later versions of the software. When the terms change, CareNest will show the new terms and ask you to accept them.
+
+13. LAW
+
+These terms are governed by the laws of India.

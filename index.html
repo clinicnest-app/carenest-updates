@@ -35,6 +35,7 @@
   .card p { margin: 0; color: var(--muted); font-size: .95rem; }
   .note { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.15rem; color: var(--muted); font-size: .95rem; }
   .note strong { color: var(--ink); }
+  .version a, footer a { color: var(--teal); }
   footer { margin-top: 3rem; text-align: center; color: var(--muted); font-size: .85rem; }
 </style>
 </head>
@@ -50,6 +51,7 @@
       <a class="button outline" href="https://github.com/mandarmm/carenest-updates/releases/download/v1.0.1/CareNest.dmg">Download for Mac<small>Apple silicon (M1 and later)</small></a>
     </div>
     <p class="version">Version <span id="v">…</span> · installed copies update themselves</p>
+    <p class="version">Free to use. By downloading or installing CareNest you accept the <a href="licence.html">licence terms</a>.</p>
   </header>
 
   <h2>What the Community Edition includes</h2>
@@ -71,7 +73,7 @@
     <div class="note"><strong>Mac.</strong> Open <em>CareNest.dmg</em> and drag CareNest to Applications. The app is not yet signed with Apple, so the first start is blocked: open <em>System Settings → Privacy &amp; Security</em> and choose <em>Open Anyway</em>.</div>
   </div>
 
-  <footer>CareNest Community Edition</footer>
+  <footer>CareNest Community Edition · <a href="licence.html">Licence terms</a></footer>
 </main>
 <script>
   fetch('stable/version.txt').then(r => r.ok ? r.text() : '').then(t => { document.getElementById('v').textContent = t.trim() || 'latest'; })
