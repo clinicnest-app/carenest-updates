@@ -3,27 +3,75 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CareNest – download</title>
+<title>CareNest – Community Edition</title>
+<meta name="description" content="CareNest Community Edition: free clinic records software for small clinics. Works on the clinic's own computer, also without internet.">
 <style>
-  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0; background: #f4f7f8; color: #16282b; }
-  main { max-width: 34rem; margin: 12vh auto; padding: 2rem; background: #fff; border: 1px solid #d5dfe1; border-radius: 14px; }
-  h1 { margin: 0 0 .25rem; color: #0b6e78; }
-  p { line-height: 1.5; }
-  a.button { display: inline-block; margin: 1rem 0 .5rem; padding: .8rem 1.6rem; background: #0b6e78; color: #fff;
-             text-decoration: none; border-radius: 10px; font-weight: 600; }
-  small { color: #5b6f73; }
+  :root { --teal: #0b6e78; --teal-dark: #095a63; --ink: #16282b; --muted: #5b6f73; --line: #d5dfe1; --bg: #f4f7f8; --card: #fff; --on-teal: #fff; }
   @media (prefers-color-scheme: dark) {
-    body { background: #0a0a0a; color: #e6eced; } main { background: #161616; border-color: #2e2e2e; }
-    h1 { color: #2ba6b3; } a.button { background: #2ba6b3; color: #04262a; } small { color: #9aa9ac; }
+    :root { --teal: #2ba6b3; --teal-dark: #45b8c4; --ink: #e6eced; --muted: #9aa9ac; --line: #2e2e2e; --bg: #0a0a0a; --card: #161616; --on-teal: #04262a; }
   }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; background: var(--bg); color: var(--ink); line-height: 1.5; }
+  main { max-width: 60rem; margin: 0 auto; padding: 3rem 1rem 4rem; }
+  header { text-align: center; padding: 1rem 0 2rem; }
+  .logo { width: 64px; height: 64px; border-radius: 50%; background: var(--teal); display: inline-grid; place-items: center; }
+  .logo::before { content: ""; width: 34px; height: 34px; background: var(--on-teal);
+    clip-path: polygon(38% 0, 62% 0, 62% 38%, 100% 38%, 100% 62%, 62% 62%, 62% 100%, 38% 100%, 38% 62%, 0 62%, 0 38%, 38% 38%); }
+  h1 { font-size: 2.4rem; margin: .75rem 0 0; }
+  .edition { display: inline-block; margin-top: .6rem; padding: .2rem .8rem; border: 1px solid var(--teal); color: var(--teal);
+    border-radius: 999px; font-weight: 600; font-size: .9rem; }
+  .lead { font-size: 1.15rem; color: var(--muted); max-width: 38rem; margin: 1rem auto 0; }
+  .downloads { display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; margin-top: 1.75rem; }
+  a.button { display: inline-block; padding: .85rem 1.5rem; border-radius: 12px; font-weight: 600; text-decoration: none;
+    background: var(--teal); color: var(--on-teal); }
+  a.button:hover { background: var(--teal-dark); }
+  a.button.outline { background: transparent; color: var(--teal); border: 1px solid var(--teal); }
+  a.button small { display: block; font-weight: 400; opacity: .85; }
+  .version { color: var(--muted); font-size: .9rem; margin-top: .9rem; }
+  h2 { font-size: 1.3rem; margin: 2.5rem 0 1rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: .9rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.15rem; }
+  .card h3 { margin: 0 0 .3rem; font-size: 1rem; color: var(--teal); }
+  .card p { margin: 0; color: var(--muted); font-size: .95rem; }
+  .note { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.15rem; color: var(--muted); font-size: .95rem; }
+  .note strong { color: var(--ink); }
+  footer { margin-top: 3rem; text-align: center; color: var(--muted); font-size: .85rem; }
 </style>
 </head>
 <body>
 <main>
-  <h1>CareNest</h1>
-  <p>Clinic records for small clinics. Works on the clinic's own computer, also without internet.</p>
-  <a class="button" href="https://github.com/mandarmm/carenest-updates/releases/latest/download/CareNest_setup.exe">Download for Windows</a>
-  <p><small>Version <span id="v">…</span>. Installed copies update themselves from this site; there is nothing else to download here.</small></p>
+  <header>
+    <div class="logo" role="img" aria-label="CareNest"></div>
+    <h1>CareNest</h1>
+    <div class="edition">Community Edition · free</div>
+    <p class="lead">Patient records for small clinics. It runs on the clinic's own computer, works without internet, and keeps the data in the clinic.</p>
+    <div class="downloads">
+      <a class="button" href="https://github.com/mandarmm/carenest-updates/releases/latest/download/CareNest_setup.exe">Download for Windows<small>Windows 10 / 11, 64-bit</small></a>
+      <a class="button outline" href="https://github.com/mandarmm/carenest-updates/releases/download/v1.0.1/CareNest.dmg">Download for Mac<small>Apple silicon (M1 and later)</small></a>
+    </div>
+    <p class="version">Version <span id="v">…</span> · installed copies update themselves</p>
+  </header>
+
+  <h2>What the Community Edition includes</h2>
+  <div class="grid">
+    <div class="card"><h3>Patients</h3><p>Registration, quick search by name, phone or ID, and each patient's visits and results over time.</p></div>
+    <div class="card"><h3>OPD queue</h3><p>Today's patients with daily token numbers: waiting, seen, and scheduled follow-ups.</p></div>
+    <div class="card"><h3>Specialty forms</h3><p>Eye clinic and ENT clinic forms (examination, refraction, audiometry, procedure notes), plus vitals and visit notes.</p></div>
+    <div class="card"><h3>Diagnosis and prescription</h3><p>ICD-10 diagnoses, a medicine list with usual doses, and printed prescriptions on your letterhead.</p></div>
+    <div class="card"><h3>Follow-ups and reminders</h3><p>Next-visit dates, a calendar, and day-before reminders by call, SMS or WhatsApp through the clinic's own provider account.</p></div>
+    <div class="card"><h3>Charges and receipts</h3><p>Fees, discounts, payments by cash, UPI or card, printed receipts and the day's collection.</p></div>
+    <div class="card"><h3>Whole clinic, one computer</h3><p>Installed on one PC; reception and consulting room open it in the browser over the clinic's network.</p></div>
+    <div class="card"><h3>Your data stays with you</h3><p>Daily automatic backups to a folder you choose, restore when needed, and no cloud account.</p></div>
+    <div class="card"><h3>Users and audit log</h3><p>Doctor and assistant roles, quick PIN switch between users, and a record of who changed what.</p></div>
+  </div>
+
+  <h2>Installing</h2>
+  <div class="grid">
+    <div class="note"><strong>Windows.</strong> Run <em>CareNest_setup.exe</em>; no administrator rights are needed. The installer is not yet code-signed, so Windows may show a "Windows protected your PC" notice: choose <em>More info</em>, then <em>Run anyway</em>.</div>
+    <div class="note"><strong>Mac.</strong> Open <em>CareNest.dmg</em> and drag CareNest to Applications. The app is not yet signed with Apple, so the first start is blocked: open <em>System Settings → Privacy &amp; Security</em> and choose <em>Open Anyway</em>.</div>
+  </div>
+
+  <footer>CareNest Community Edition</footer>
 </main>
 <script>
   fetch('stable/version.txt').then(r => r.ok ? r.text() : '').then(t => { document.getElementById('v').textContent = t.trim() || 'latest'; })
