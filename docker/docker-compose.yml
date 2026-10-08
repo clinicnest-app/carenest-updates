@@ -1,0 +1,74 @@
+# ClinicNest server edition: ClinicNest + PostgreSQL + Caddy (web server in front: https, or plain http on the
+# clinic network). install/install-server.sh (Linux, Mac) or install-server.ps1 (Windows) puts this file into the
+# ClinicNest folder (Linux /opt/clinicnest) with a .env file next to it (passwords, address, time zone) and starts
+# it. By hand, in that folder:
+#   docker compose up -d                          start (and after a change of .env)
+#   docker compose pull && docker compose up -d   update to the newest ClinicNest
+#   docker compose logs -f app                    ClinicNest's log
+# Data: the Docker volumes clinicnest_postgres (database) and clinicnest_caddy (https certificates);
+# ./backups (ClinicNest's daily backups – copy them off the server too), ./data (ClinicNest's own files).
+# The database is in a volume, not a folder: on Windows and Mac a folder shared into Docker cannot give PostgreSQL
+# the file permissions it insists on.
+name: clinicnest
+
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: clinicnest
+      POSTGRES_USER: clinicnest
+      POSTGRES_PASSWORD: ${CLINICNEST_DB_PASSWORD:?missing in .env - run install-server.sh}
+      TZ: ${TZ:-Asia/Kolkata}
+    volumes:
+      # PostgreSQL 18+ keeps its data in /var/lib/postgresql/<major>/docker: the volume is one level up, so a later
+      # major version can sit next to it (pg_upgrade) instead of failing on the old files
+      - postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clinicnest -d clinicnest"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  app:
+    image: ${CLINICNEST_IMAGE:-ghcr.io/clinicnest-app/clinicnest-server}:${CLINICNEST_VERSION:-latest}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      CLINICNEST_DB_URL: jdbc:postgresql://db:5432/clinicnest
+      CLINICNEST_DB_USER: clinicnest
+      CLINICNEST_DB_PASSWORD: ${CLINICNEST_DB_PASSWORD}
+      # https (an internet address): the login cookie travels over https only
+      CLINICNEST_SECURE_COOKIE: ${CLINICNEST_SECURE_COOKIE:-false}
+      # until the first-run setup is done, only someone with this code can set the clinic up
+      CLINICNEST_SETUP_CODE: ${CLINICNEST_SETUP_CODE:-}
+      TZ: ${TZ:-Asia/Kolkata}
+      # the backup folder as seen on the server (the screens name it; inside the container it is /backups)
+      CLINIC_BACKUP_FOLDER_SHOWN: ${CLINICNEST_BACKUP_FOLDER:-${CLINICNEST_DIR:-/opt/clinicnest}/backups}
+    volumes:
+      - ./data:/data
+      - ./backups:/backups
+    # time for the backup ClinicNest makes when it is stopped (update, restart of the server)
+    stop_grace_period: 2m
+    # not published: reached only through Caddy
+
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "${CLINICNEST_HTTP_PORT:-80}:80"
+      - "${CLINICNEST_HTTPS_PORT:-443}:443"
+    environment:
+      # ":80" = plain http on the clinic network; a name (clinic.example.com) = https with a free certificate
+      CLINICNEST_SITE: ${CLINICNEST_SITE:-:80}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy:/data
+
+volumes:
+  postgres:
+  caddy:

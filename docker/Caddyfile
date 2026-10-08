@@ -1,0 +1,13 @@
+# Caddy in front of ClinicNest (docker-compose.yml). CLINICNEST_SITE (.env):
+#   :80                 plain http on the clinic network (like the portable edition)
+#   clinic.example.com  https with a free Let's Encrypt certificate – the name must point to this server and
+#                       ports 80 and 443 must be reachable from the internet
+# Caddy passes the visitor's address and https on to ClinicNest (X-Forwarded-For / -Proto).
+{$CLINICNEST_SITE} {
+	encode gzip
+	# photos and documents up to 15 MB (ClinicNest's own limit is 16 MB per request)
+	request_body {
+		max_size 16MB
+	}
+	reverse_proxy app:8080
+}
