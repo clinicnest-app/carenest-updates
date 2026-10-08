@@ -69,6 +69,13 @@
   a.button:hover { background: var(--teal-dark); }
   a.button small { display: block; font-weight: 400; opacity: .85; }
   a.button.cta { display: inline-block; margin-top: 1.2rem; padding: .85rem 1.6rem; }
+  .ctas { display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; gap: .75rem; margin-top: 1.2rem; }
+  .ctas a.button.cta { margin-top: 0; }
+  a.button.secondary { display: inline-flex; flex-direction: column; justify-content: center; padding: .85rem 1.6rem;
+    background: var(--card); color: var(--teal); border: 2px solid var(--teal); }
+  a.button.secondary:hover { background: var(--teal); color: var(--on-teal); }
+  a.button.secondary .heart { color: #e11d48; }
+  a.button.secondary:hover .heart { color: inherit; }
   .or { text-align: center; color: var(--muted); font-size: .85rem; margin: .7rem 0 0; }
   .muted { color: var(--muted); font-size: .92rem; }
   .version { color: var(--muted); font-size: .9rem; margin-top: .9rem; text-align: center; }
@@ -110,8 +117,10 @@
     <div class="edition">Community Edition · free</div>
     <p class="lead">Free clinic management software for small clinics: patient records, OPD, prescriptions and follow-ups.
       It runs on the clinic's own computer, works without internet, and keeps the data in the clinic.</p>
-    <p><a class="button cta" href="#install">Install ClinicNest<small>Windows 10 / 11 · Mac with Apple silicon</small></a></p>
-    <p class="version"><a href="#support">Support, feedback and how to help</a></p>
+    <div class="ctas">
+      <a class="button cta" href="#install">Install ClinicNest<small>Windows 10 / 11 · Mac with Apple silicon</small></a>
+      <a class="button secondary" href="#support"><span><span class="heart" aria-hidden="true">♥</span> Support &amp; feedback</span><small>Get help · report a bug · how to help</small></a>
+    </div>
   </header>
 
   <h2>What the Community Edition includes</h2>
