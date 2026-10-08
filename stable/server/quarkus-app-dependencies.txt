@@ -13,6 +13,7 @@ io.agroal:agroal-api::jar:3.2.1
 io.agroal:agroal-narayana::jar:3.2.1
 io.agroal:agroal-pool::jar:3.2.1
 io.leangen.geantyref:geantyref::jar:2.0.1
+io.nayuki:qrcodegen::jar:1.8.0
 io.netty:netty-buffer::jar:4.1.138.Final
 io.netty:netty-codec-dns::jar:4.1.138.Final
 io.netty:netty-codec-haproxy::jar:4.1.138.Final
