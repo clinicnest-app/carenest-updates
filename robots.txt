@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+# update files for installed copies – not pages
+Disallow: /stable/
+
+Sitemap: https://updates.clinicnest.app/sitemap.xml

@@ -6,8 +6,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<title>ClinicNest – Community Edition</title>
-<meta name="description" content="ClinicNest Community Edition: free clinic records software for small clinics. Works on the clinic's own computer, also without internet.">
+<title>ClinicNest – free clinic management software for small clinics</title>
+<meta name="description" content="ClinicNest Community Edition: free clinic management software for small clinics – patient records, OPD tokens, eye and ENT forms, prescriptions, follow-ups and receipts. Runs on the clinic's own Windows PC or Mac, also without internet.">
+<link rel="canonical" href="https://updates.clinicnest.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ClinicNest">
+<meta property="og:title" content="ClinicNest – free clinic management software">
+<meta property="og:description" content="Patient records, OPD tokens, prescriptions and follow-ups for small clinics. On the clinic's own computer, works without internet. Free.">
+<meta property="og:url" content="https://updates.clinicnest.app/">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "ClinicNest Community Edition",
+  "applicationCategory": "MedicalApplication",
+  "operatingSystem": "Windows 10, Windows 11, macOS (Apple silicon)",
+  "description": "Free clinic management software for small clinics: patient records, OPD tokens, eye and ENT forms, prescriptions, follow-ups and receipts. Runs on the clinic's own computer and works without internet.",
+  "url": "https://updates.clinicnest.app/",
+  "downloadUrl": "https://updates.clinicnest.app/#install",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "publisher": { "@type": "Organization", "name": "ClinicNest", "email": "support@clinicnest.app" }
+}
+</script>
 <style>
   :root { --teal: #2563eb; --teal-dark: #1d4ed8; --ink: #14213d; --muted: #5b6577; --line: #d5dbe6; --bg: #f4f6fb; --card: #fff;
     --on-teal: #fff; --code: #0f172a; --on-code: #e2e8f0; --warn: #b45309; --ok: #15803d; }
@@ -63,6 +84,16 @@
   kbd { font: .85em ui-monospace, Menlo, Consolas, monospace; border: 1px solid var(--line); border-radius: 4px; padding: 0 .3rem; background: var(--bg); color: var(--ink); }
   em { font-style: normal; font-weight: 600; color: var(--ink); }
 
+  .support .card p, .support .card li { color: var(--muted); font-size: .95rem; }
+  .support .card ul, .support .card ol { margin: .4rem 0 0; padding-left: 1.2rem; }
+  .support .small { margin-top: .6rem; font-size: .85rem; }
+  .links { display: flex; flex-wrap: wrap; gap: .4rem 1rem; margin-top: .75rem; }
+  .links a, .linklike { color: var(--teal); font-weight: 600; text-decoration: none; font: inherit; font-weight: 600;
+    background: none; border: 0; padding: 0; cursor: pointer; }
+  .links a:hover, .linklike:hover { text-decoration: underline; }
+  .badge { font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--warn);
+    border: 1px solid currentColor; border-radius: 999px; padding: .05rem .5rem; vertical-align: middle; margin-left: .3rem; }
+  .card.soon { border-style: dashed; }
   footer { margin-top: 3rem; text-align: center; color: var(--muted); font-size: .85rem; }
 </style>
 </head>
@@ -77,8 +108,10 @@
     </svg>
     <h1>ClinicNest</h1>
     <div class="edition">Community Edition · free</div>
-    <p class="lead">Patient records for small clinics. It runs on the clinic's own computer, works without internet, and keeps the data in the clinic.</p>
+    <p class="lead">Free clinic management software for small clinics: patient records, OPD, prescriptions and follow-ups.
+      It runs on the clinic's own computer, works without internet, and keeps the data in the clinic.</p>
     <p><a class="button cta" href="#install">Install ClinicNest<small>Windows 10 / 11 · Mac with Apple silicon</small></a></p>
+    <p class="version"><a href="#support">Support, feedback and how to help</a></p>
   </header>
 
   <h2>What the Community Edition includes</h2>
@@ -106,7 +139,8 @@
 
       <div class="label">Recommended: one command</div>
       <ol class="steps">
-        <li>Press <kbd>Windows</kbd>, type <em>PowerShell</em> and open <em>Windows PowerShell</em> (not as administrator).</li>
+        <li>Press <kbd>Windows</kbd>, type <em>PowerShell</em> and open <em>Windows PowerShell</em> – not <em>Command Prompt</em>,
+          and not as administrator.</li>
         <li>Copy this line, paste it into PowerShell (right-click) and press <kbd>Enter</kbd>:</li>
       </ol>
       <div class="cmd"><code id="cmd-win">irm https://updates.clinicnest.app/install.ps1 | iex</code><button type="button" data-copy="cmd-win">Copy</button></div>
@@ -114,6 +148,8 @@
         <li>ClinicNest downloads, is checked, installs and starts. The browser opens in about 30 seconds.</li>
         <li>If <em>Windows Firewall</em> asks about ClinicNest / Java: tick <em>Private networks</em> and click <em>Allow</em>.</li>
       </ol>
+      <p class="muted">Already in <em>Command Prompt</em> (<code>cmd</code>)? Use this line there instead:</p>
+      <div class="cmd"><code id="cmd-win-cmd">powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://updates.clinicnest.app/install.ps1 | iex"</code><button type="button" data-copy="cmd-win-cmd">Copy</button></div>
 
       <div class="label">Or with the installer</div>
       <a class="button" href="https://github.com/clinicnest-app/clinic-nest-updates/releases/latest/download/ClinicNest_setup.exe">Download ClinicNest_setup.exe<small>64-bit · about 65 MB</small></a>
@@ -169,6 +205,9 @@
           <li>The Wi-Fi must be set as a <em>Private</em> network (Settings → Network &amp; internet → Wi-Fi → your network).</li>
           <li>Company security software (e.g. FortiClient, other firewalls) may block incoming connections: ask your IT.</li>
         </ol></details>
+      <details><summary>"'irm' is not recognized as an internal or external command"</summary>
+        <p>The line was pasted into <em>Command Prompt</em>, not PowerShell. Open <em>Windows PowerShell</em> and paste it there,
+          or use the <em>Command Prompt</em> line shown <a href="#install">above</a> (it starts PowerShell for you).</p></details>
       <details><summary>"running scripts is disabled on this system"</summary>
         <p>Paste the command exactly as shown (<code>irm … | iex</code>) – it does not need script execution to be allowed.
           If your organisation blocks it, use the installer button instead.</p></details>
@@ -204,6 +243,85 @@
     </section>
   </div>
 
+  <h2 id="support">Support this project</h2>
+  <p class="muted">ClinicNest is built with doctors, for small clinics. Here is how to get help – and how to help it grow.</p>
+
+  <div class="grid support">
+    <section class="card">
+      <h3>Getting started</h3>
+      <ol class="steps">
+        <li>Install it on the clinic's main computer (<a href="#install">above</a>).</li>
+        <li>First start: the clinic's details and the doctor's login. Keep the <em>recovery code</em> safe – printed, not on the PC.</li>
+        <li>Settings: letterhead, fees, staff logins, and a <em>backup password</em> with a USB or cloud folder for the extra copy.</li>
+        <li>Other computers and phones: scan the QR code in <em>Settings → Devices</em> and approve them there.</li>
+        <li>Every day: find or register the patient → <em>Start visit</em> → forms, diagnosis, prescription → print → next visit.</li>
+      </ol>
+      <p class="small">Inside ClinicNest: the <em>?</em> icon at the top right.</p>
+    </section>
+
+    <section class="card">
+      <h3>Report a problem</h3>
+      <p>Something does not work? Tell us what you did, what happened, and the ClinicNest version (Settings → About).
+        For errors, attach the file from <em>? → Save logs for support</em> – by email only.</p>
+      <div class="links">
+        <a href="https://github.com/clinicnest-app/feedback/issues/new?template=bug.yml">Report a bug</a>
+        <a href="mailto:support@clinicnest.app?subject=ClinicNest%20problem">Email support</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Request a feature · share an idea</h3>
+      <p>Missing a form, a print, a report, a specialty? Ideas for making the clinic day easier are just as welcome.</p>
+      <div class="links">
+        <a href="https://github.com/clinicnest-app/feedback/issues/new?template=feature.yml">Request a feature</a>
+        <a href="https://github.com/clinicnest-app/feedback/issues/new?template=feature.yml&amp;title=Idea%3A%20">Share an idea</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Connect a medical device</h3>
+      <p>Auto-refractometer, tonometer, lensometer, audiometer, tympanometer, ECG, BP monitor, pulse oximeter, glucometer,
+        weighing scale … Tell us the make and model and how it connects (USB, serial cable, network, or exported files),
+        and we look at bringing its readings straight into the visit.</p>
+      <div class="links">
+        <a href="https://github.com/clinicnest-app/feedback/issues/new?template=feature.yml&amp;title=Device%20integration%3A%20">Request a device integration</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Tell a colleague</h3>
+      <p>The best help is a recommendation: another doctor, a clinic you work with, a hospital OPD.</p>
+      <div class="links">
+        <a id="share-whatsapp" href="https://wa.me/?text=ClinicNest%20%E2%80%93%20free%20patient%20records%20for%20small%20clinics%2C%20on%20the%20clinic%27s%20own%20computer%3A%20https%3A%2F%2Fupdates.clinicnest.app%2F">Share on WhatsApp</a>
+        <a href="mailto:?subject=ClinicNest%20for%20your%20clinic&amp;body=Free%20patient%20records%20for%20small%20clinics%2C%20on%20the%20clinic%27s%20own%20computer%3A%20https%3A%2F%2Fupdates.clinicnest.app%2F">Share by email</a>
+        <button type="button" class="linklike" id="share-copy">Share the link</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Sponsor a feature</h3>
+      <p>Need something sooner – a specialty, a report, a device, a scheme's forms? A clinic, a group or a company can sponsor
+        it: we agree on what and when, and it becomes part of ClinicNest for every clinic.</p>
+      <div class="links">
+        <a href="mailto:support@clinicnest.app?subject=Sponsor%20a%20feature">Write to us</a>
+      </div>
+    </section>
+
+    <section class="card soon">
+      <h3>Paid support and subscription <span class="badge">coming soon</span></h3>
+      <ul>
+        <li>Priority help by phone, email or WhatsApp</li>
+        <li>Installation and setup done with you, remotely</li>
+        <li>Moving your records from Excel or your old software</li>
+        <li>Training for doctors and staff</li>
+        <li>A hosted server edition for several clinics or branches</li>
+      </ul>
+      <div class="links">
+        <a href="mailto:support@clinicnest.app?subject=Paid%20support%20%E2%80%93%20interested">Tell me when it is available</a>
+      </div>
+    </section>
+  </div>
+
   <footer>ClinicNest Community Edition · <a href="licence.html">Licence terms</a> ·
     Feedback and support: <a href="mailto:support@clinicnest.app">support@clinicnest.app</a> or the
     <a href="https://github.com/clinicnest-app/feedback/issues/new/choose">feedback page</a></footer>
@@ -211,6 +329,12 @@
 <script>
   fetch('stable/version.txt').then(r => r.ok ? r.text() : '').then(t => { document.getElementById('v').textContent = t.trim() || 'latest'; })
     .catch(() => { document.getElementById('v').textContent = 'latest'; });
+  document.getElementById('share-copy').addEventListener('click', async (e) => {
+    const link = 'https://updates.clinicnest.app/';
+    if (navigator.share) { try { await navigator.share({ title: 'ClinicNest', text: 'Free patient records for small clinics', url: link }); return; } catch { /* closed */ } }
+    try { await navigator.clipboard.writeText(link); e.target.textContent = 'Link copied'; } catch { e.target.textContent = link; }
+    setTimeout(() => (e.target.textContent = 'Share the link'), 2500);
+  });
   document.querySelectorAll('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
     const text = document.getElementById(b.dataset.copy).textContent;
     try { await navigator.clipboard.writeText(text); } catch { const r = document.createRange(); r.selectNode(document.getElementById(b.dataset.copy)); getSelection().removeAllRanges(); getSelection().addRange(r); }
