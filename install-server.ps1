@@ -119,13 +119,29 @@
             $site = ($site -replace '\s', '' -replace '^https?://', '' -replace '/.*$', '')
             if (-not $site -or $site -eq 'none') { $site = ':80'; $secure = 'false' } else { $secure = 'true' }
 
+            function PortTaken([int] $p) { [bool] (Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue) }
             $httpPort = if ($env:CLINICNEST_HTTP_PORT) { $env:CLINICNEST_HTTP_PORT } else { '80' }
-            if ($site -eq ':80' -and $httpPort -eq '80' -and
-                (Get-NetTCPConnection -LocalPort 80 -State Listen -ErrorAction SilentlyContinue)) {
-                $httpPort = '8080'
-                Write-Host "Port 80 is used by another program on this computer: ClinicNest uses port $httpPort."
-            }
             $httpsPort = if ($env:CLINICNEST_HTTPS_PORT) { $env:CLINICNEST_HTTPS_PORT } else { '443' }
+            if ($site -eq ':80') {
+                # clinic network: when another program has the port, the next free one (80 -> 8080, 8081, ...)
+                if (PortTaken ([int] $httpPort)) {
+                    $wanted = $httpPort
+                    $try = if ($httpPort -eq '80') { 8080 } else { [int] $httpPort + 1 }
+                    $last = $try + 50
+                    while ($try -le $last -and (PortTaken $try)) { $try++ }
+                    if ($try -gt $last) { Fail "port $wanted and the next 50 are all used by other programs on this computer." }
+                    $httpPort = "$try"
+                    Write-Host "Port $wanted is used by another program on this computer: ClinicNest uses port $httpPort."
+                }
+                # https is not used: its port is published on this computer only, on a free port Docker picks
+                if (-not $env:CLINICNEST_HTTPS_PORT) { $httpsPort = '127.0.0.1:' }
+            } else {
+                foreach ($p in $httpPort, $httpsPort) {
+                    if (PortTaken ([int] $p)) {
+                        Fail "port $p is used by another program on this computer (often IIS or another web server). https for $site needs ports 80 and 443 - stop that program, or run this again and press Enter at the question to use ClinicNest on the clinic network only."
+                    }
+                }
+            }
 
             # Windows time zone -> the name Linux uses
             $tzGuess = 'Asia/Kolkata'
@@ -145,6 +161,7 @@
                 "CLINICNEST_SITE=$site",
                 "CLINICNEST_SECURE_COOKIE=$secure",
                 "CLINICNEST_HTTP_PORT=$httpPort",
+                '# https port; "127.0.0.1:" = not used (clinic network), published on this computer only',
                 "CLINICNEST_HTTPS_PORT=$httpsPort",
                 "TZ=$tz",
                 "CLINICNEST_VERSION=$version",
@@ -164,6 +181,15 @@
             if ($line -match '^([A-Z_]+)=(.*)$') { $settings[$Matches[1]] = $Matches[2] }
         }
         New-Item -ItemType Directory -Force -Path (Join-Path $dir 'data'), (Join-Path $dir 'backups') | Out-Null
+
+        # From here on only .env counts. Docker Compose lets a variable of this PowerShell window win over the same
+        # one in .env - a setting given to this script (a port, the address) would then be used as typed, not as
+        # checked and written above, and only for this one run.
+        foreach ($name in 'CLINICNEST_SITE', 'CLINICNEST_HTTP_PORT', 'CLINICNEST_HTTPS_PORT', 'CLINICNEST_VERSION',
+                'CLINICNEST_IMAGE', 'CLINICNEST_SECURE_COOKIE', 'CLINICNEST_SETUP_CODE', 'CLINICNEST_DB_PASSWORD',
+                'CLINICNEST_BACKUP_FOLDER', 'CLINICNEST_DIR', 'TZ') {
+            Remove-Item "Env:$name" -ErrorAction SilentlyContinue
+        }
 
         # -------------------------------------------------------------------------------------- start
         Say 'Downloading ClinicNest ...'

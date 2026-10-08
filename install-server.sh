@@ -38,6 +38,8 @@ ask() { # ask "question" default → REPLY
 random() { # random letters/digits, length $1
   LC_ALL=C tr -dc 'A-HJ-NP-Z2-9' < /dev/urandom | head -c "$1" || true
 }
+# a program on this computer answers on port $1 (bash's /dev/tcp – works on Linux and Mac alike)
+port_taken() { (exec 3<> "/dev/tcp/127.0.0.1/$1") 2> /dev/null; }
 
 # ---------------------------------------------------------------------------------------------- checks
 case "$OS" in
@@ -112,9 +114,29 @@ if [ ! -f .env ]; then
   if [ -z "$SITE" ] || [ "$SITE" = none ]; then SITE=":80"; SECURE=false; else SECURE=true; fi
 
   HTTP_PORT="${CLINICNEST_HTTP_PORT:-80}"
-  if [ "$SITE" = ":80" ] && [ "$HTTP_PORT" = 80 ] && command -v ss > /dev/null && ss -ltnH 2> /dev/null | awk '{print $4}' | grep -qE '[:.]80$'; then
-    HTTP_PORT=8080
-    echo "Port 80 is used by another program on this server: ClinicNest uses port $HTTP_PORT."
+  HTTPS_PORT="${CLINICNEST_HTTPS_PORT:-443}"
+  if [ "$SITE" = ":80" ]; then
+    # clinic network: when another program has the port, the next free one (80 → 8080, 8081, …)
+    if port_taken "$HTTP_PORT"; then
+      WANTED="$HTTP_PORT"
+      if [ "$HTTP_PORT" = 80 ]; then try=8080; else try=$((HTTP_PORT + 1)); fi
+      last=$((try + 50))
+      while [ "$try" -le "$last" ] && port_taken "$try"; do try=$((try + 1)); done
+      [ "$try" -le "$last" ] || fail "port $WANTED and the next 50 are all used by other programs on this computer."
+      HTTP_PORT="$try"
+      echo "Port $WANTED is used by another program on this computer: ClinicNest uses port $HTTP_PORT."
+    fi
+    # https is not used: its port is published on this computer only, on a free port Docker picks – 443 stays
+    # free for whatever else runs here
+    [ -n "${CLINICNEST_HTTPS_PORT:-}" ] || HTTPS_PORT="127.0.0.1:"
+  else
+    # https with a free certificate needs exactly these two
+    for p in "$HTTP_PORT" "$HTTPS_PORT"; do
+      if port_taken "$p"; then
+        fail "port $p is used by another program on this computer. https for $SITE needs ports 80 and 443 –
+stop that program, or run this again and press Enter at the question to use ClinicNest on the clinic network only."
+      fi
+    done
   fi
   ask "Time zone of the clinic [$TZ_GUESS]:" "$TZ_GUESS"
   CLINIC_TZ="$REPLY"
@@ -129,7 +151,8 @@ CLINICNEST_SETUP_CODE=$(random 4)-$(random 4)-$(random 4)-$(random 4)
 CLINICNEST_SITE=$SITE
 CLINICNEST_SECURE_COOKIE=$SECURE
 CLINICNEST_HTTP_PORT=$HTTP_PORT
-CLINICNEST_HTTPS_PORT=${CLINICNEST_HTTPS_PORT:-443}
+# https port; "127.0.0.1:" = not used (clinic network), published on this computer only
+CLINICNEST_HTTPS_PORT=$HTTPS_PORT
 TZ=$CLINIC_TZ
 CLINICNEST_VERSION=${CLINICNEST_VERSION:-latest}
 # this folder (named on the screens, e.g. where to copy a backup from ClinicNest for Windows / Mac)
@@ -148,6 +171,12 @@ get() { sed -n "s/^$1=//p" .env | tail -n 1; }
 mkdir -p data backups
 # ClinicNest runs as user 10001 in its container (Linux; Docker Desktop shares folders without owners)
 [ "$OS" = Linux ] && { chown 10001:10001 data backups 2> /dev/null || true; }
+
+# From here on only .env counts. Docker Compose lets a variable of this shell win over the same one in .env – a
+# setting given to this script (a port, the address) would then be used as typed, not as checked and written
+# above, and only for this one run.
+unset CLINICNEST_SITE CLINICNEST_HTTP_PORT CLINICNEST_HTTPS_PORT CLINICNEST_VERSION CLINICNEST_IMAGE \
+  CLINICNEST_SECURE_COOKIE CLINICNEST_SETUP_CODE CLINICNEST_DB_PASSWORD CLINICNEST_BACKUP_FOLDER CLINICNEST_DIR TZ
 
 # ---------------------------------------------------------------------------------------------- start
 say "Downloading ClinicNest …"
@@ -176,7 +205,7 @@ else
   suffix=""; [ "$PORT" = 80 ] || suffix=":$PORT"
   # the server's network addresses – not Docker's own networks
   if command -v ip > /dev/null; then
-    ips="$(ip -4 -o addr show scope global | grep -vE ' (docker[0-9]*|br-[0-9a-f]+|veth[^ ]*) ' | awk '{split($4, a, "/"); print a[1]}')"
+    ips="$(ip -4 -o addr show scope global 2> /dev/null | grep -vE ' (docker[0-9]*|br-[0-9a-f]+|veth[^ ]*) ' | awk '{split($4, a, "/"); print a[1]}' || true)"
   else
     ips="$(ipconfig getifaddr en0 2> /dev/null || true)"
   fi

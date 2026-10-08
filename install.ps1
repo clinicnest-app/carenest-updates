@@ -16,7 +16,9 @@
 # all users in Program Files, as a background service – Windows asks for administrator permission once. It sits
 # beside ClinicNest (data in C:\ProgramData\Clinic Server).
 #
-# Testing: $env:CLINICNEST_DOWNLOAD = <base URL>; $env:CLINICNEST_CHECK_ONLY = 1 (download and check, no install)
+# Downloaded from downloads.clinicnest.app; when that cannot be reached, from the GitHub Release.
+#
+# Testing: $env:CLINICNEST_DOWNLOAD = '<base URL> [<second base URL>]'; $env:CLINICNEST_CHECK_ONLY = 1 (download and check, no install)
 
 & {
     $ErrorActionPreference = 'Stop'
@@ -24,8 +26,10 @@
     if ($PSVersionTable.PSVersion.Major -lt 6) {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     }
-    $base = if ($env:CLINICNEST_DOWNLOAD) { $env:CLINICNEST_DOWNLOAD.TrimEnd('/') } `
-        else { 'https://github.com/clinicnest-app/clinic-nest-updates/releases/latest/download' }
+    # where the installers are: our own address first, the GitHub Release second (some networks block the one or
+    # the other); wherever it comes from, the same signature check decides
+    $sources = if ($env:CLINICNEST_DOWNLOAD) { @($env:CLINICNEST_DOWNLOAD -split '\s+' | Where-Object { $_ } | ForEach-Object { $_.TrimEnd('/') }) } `
+        else { @('https://downloads.clinicnest.app/latest', 'https://github.com/clinicnest-app/clinic-nest-updates/releases/latest/download') }
     $server = $env:CLINICNEST_EDITION -eq 'server'
     if ($env:CLINICNEST_EDITION -and -not $server) {
         Write-Host "Unknown CLINICNEST_EDITION '$($env:CLINICNEST_EDITION)' - use nothing (ClinicNest) or 'server'." -ForegroundColor Red
@@ -47,13 +51,20 @@
     New-Item -ItemType Directory -Path $tmp | Out-Null
     try {
         Write-Host "Downloading $title ..." -ForegroundColor Cyan
-        foreach ($file in 'SHA256SUMS', 'SHA256SUMS.sig', $setupName) {
+        # all three files from the same place, so they belong together
+        $from = $null
+        foreach ($source in $sources) {
             try {
-                Invoke-WebRequest -UseBasicParsing -Uri "$base/$file" -OutFile (Join-Path $tmp $file)
+                foreach ($file in 'SHA256SUMS', 'SHA256SUMS.sig', $setupName) {
+                    Invoke-WebRequest -UseBasicParsing -Uri "$source/$file" -OutFile (Join-Path $tmp $file)
+                }
+                $from = $source
+                break
             } catch {
-                Fail "could not download $file from $base - check the internet connection and try again in a few minutes."
+                Write-Host "Not available from $source - trying another address ..."
             }
         }
+        if (-not $from) { Fail "could not download $title - check the internet connection (tried: $($sources -join ', '))." }
 
         Write-Host 'Checking the download ...' -ForegroundColor Cyan
         $sums = [IO.File]::ReadAllBytes((Join-Path $tmp 'SHA256SUMS'))

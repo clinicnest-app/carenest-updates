@@ -19,8 +19,9 @@
 # On the internet with https: use the Docker install (install-server.sh) – it brings a web server with certificates.
 set -euo pipefail
 
-BASE="${CLINICNEST_DOWNLOAD:-https://github.com/clinicnest-app/clinic-nest-updates/releases/latest/download}"
-BASE="${BASE%/}"
+# where the zip is: our own address first, the GitHub Release second (some networks block the one or the other);
+# wherever it comes from, the same signature check decides. Testing: CLINICNEST_DOWNLOAD="<base> [<second base>]"
+SOURCES="${CLINICNEST_DOWNLOAD:-https://downloads.clinicnest.app/latest https://github.com/clinicnest-app/clinic-nest-updates/releases/latest/download}"
 ZIP=ClinicNest-Server-linux.zip
 DIR=/opt/clinicnest-server
 DATA=/var/lib/clinicnest-server
@@ -39,6 +40,8 @@ ask() {
   [ -n "$REPLY" ] || REPLY="$d"
 }
 random() { LC_ALL=C tr -dc 'A-HJ-NP-Z2-9' < /dev/urandom | head -c "$1" || true; }
+# a program on this computer answers on port $1
+port_taken() { (exec 3<> "/dev/tcp/127.0.0.1/$1") 2> /dev/null; }
 
 [ "$(uname -s)" = Linux ] || fail "this script is for Linux. Windows / Mac: the ClinicNest Server installer on the download page."
 [ "$(id -u)" -eq 0 ] || fail "run it as administrator:  curl -fsSL https://updates.clinicnest.app/install-server-linux.sh | sudo bash"
@@ -82,9 +85,18 @@ LdDPZ6Qg8FWENrxXp2YxwKTtx3KVowXkggni3oyi37x1AgMBAAE=
 KEY
 download() { curl -fL --retry 3 --connect-timeout 20 "$@"; }
 bold "Downloading ClinicNest Server …"
-download -sS -o "$TMP/SHA256SUMS" "$BASE/SHA256SUMS" || fail "could not download from $BASE – check the internet connection."
-download -sS -o "$TMP/SHA256SUMS.sig" "$BASE/SHA256SUMS.sig" || fail "the signature file is missing. Try again in a few minutes."
-download --progress-bar -o "$TMP/$ZIP" "$BASE/$ZIP" || fail "the download of $ZIP failed. Try again."
+# all three files from the same place, so they belong together
+fetch() {
+  download -sS -o "$TMP/SHA256SUMS" "$1/SHA256SUMS" 2> /dev/null \
+    && download -sS -o "$TMP/SHA256SUMS.sig" "$1/SHA256SUMS.sig" 2> /dev/null \
+    && download --progress-bar -o "$TMP/$ZIP" "$1/$ZIP"
+}
+FROM=""
+for source in $SOURCES; do
+  if fetch "${source%/}"; then FROM="${source%/}"; break; fi
+  echo "Not available from ${source%/} – trying another address …"
+done
+[ -n "$FROM" ] || fail "could not download ClinicNest Server – check the internet connection (tried: $SOURCES)."
 openssl dgst -sha256 -verify "$TMP/clinicnest.pub" -signature "$TMP/SHA256SUMS.sig" "$TMP/SHA256SUMS" > /dev/null 2>&1 \
   || fail "the checksum file is not signed by ClinicNest. Nothing was installed – please tell support@clinicnest.app."
 expected="$(awk -v f="$ZIP" '{ name = $2; sub(/^\*/, "", name) } name == f { print $1 }' "$TMP/SHA256SUMS")"
@@ -119,6 +131,12 @@ if [ ! -f "$ENVF" ]; then
   NEW=1
   TZ_GUESS="$(timedatectl show -p Timezone --value 2> /dev/null || cat /etc/timezone 2> /dev/null || true)"
   [ -n "$TZ_GUESS" ] && [ "$TZ_GUESS" != UTC ] && [ "$TZ_GUESS" != Etc/UTC ] || TZ_GUESS="Asia/Kolkata"
+  # the port: when another program has it, the next free one
+  WANTED="${CLINICNEST_HTTP_PORT:-8081}"
+  NEW_PORT="$WANTED"
+  while [ "$NEW_PORT" -le $((WANTED + 50)) ] && port_taken "$NEW_PORT"; do NEW_PORT=$((NEW_PORT + 1)); done
+  [ "$NEW_PORT" -le $((WANTED + 50)) ] || fail "port $WANTED and the next 50 are all used by other programs on this server."
+  [ "$NEW_PORT" = "$WANTED" ] || echo "Port $WANTED is used by another program on this server: ClinicNest uses port $NEW_PORT."
   ask "Time zone of the clinic [$TZ_GUESS]:" "${TZ:-$TZ_GUESS}"
   ( umask 077 && touch "$ENVF" )
   cat > "$ENVF" <<EOF
@@ -129,7 +147,7 @@ CLINICNEST_DB_USER=clinicnest
 CLINICNEST_DB_PASSWORD=$(random 32)
 # needed once, for the first-run setup in the browser
 CLINICNEST_SETUP_CODE=$(random 4)-$(random 4)-$(random 4)-$(random 4)
-CLINICNEST_HTTP_PORT=${CLINICNEST_HTTP_PORT:-8081}
+CLINICNEST_HTTP_PORT=$NEW_PORT
 TZ=$REPLY
 EOF
   chmod 600 "$ENVF"
@@ -213,9 +231,12 @@ done
 
 # ---------------------------------------------------------------------------------------------- done
 bold "ClinicNest Server is running."
-for ip in $(ip -4 -o addr show scope global 2> /dev/null | grep -vE ' (docker[0-9]*|br-[0-9a-f]+|veth[^ ]*) ' | awk '{split($4, a, "/"); print a[1]}'); do
+# this server's network addresses (none found – no "ip" tool, no network yet – must not stop the script)
+ADDRESSES="$(ip -4 -o addr show scope global 2> /dev/null | grep -vE ' (docker[0-9]*|br-[0-9a-f]+|veth[^ ]*) ' | awk '{split($4, a, "/"); print a[1]}' || true)"
+for ip in $ADDRESSES; do
   echo "Open on a computer in the clinic:  http://$ip:$PORT"
 done
+[ -n "$ADDRESSES" ] || echo "Open on a computer in the clinic:  http://<address of this server>:$PORT"
 if command -v ufw > /dev/null && ufw status 2> /dev/null | grep -q "Status: active"; then
   ufw allow "$PORT/tcp" > /dev/null && echo "Firewall (ufw): port $PORT opened."
 fi
@@ -223,7 +244,7 @@ if [ -n "$NEW" ]; then
   echo
   echo "Setup code (asked once, at the first-run setup):  $(get CLINICNEST_SETUP_CODE)"
 fi
-first_ip="$(ip -4 -o addr show scope global 2> /dev/null | grep -vE ' (docker[0-9]*|br-[0-9a-f]+|veth[^ ]*) ' | awk '{split($4, a, "/"); print a[1]}' | head -n 1)"
+first_ip="$(printf '%s\n' $ADDRESSES | head -n 1)"
 [ -n "$first_ip" ] || first_ip="<address of this server>"
 # what is where, how to update / stop / uninstall: README.txt (written on every run), shown now
 cat > "$DIR/README.txt" <<EOF

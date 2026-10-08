@@ -12,10 +12,14 @@
 # …/Clinic Server). "server" (or CLINICNEST_EDITION=server) installs ClinicNest Server.app from ClinicNest-Server.dmg;
 # it sits beside ClinicNest.
 #
-# Testing: CLINICNEST_DOWNLOAD=<base URL>  CLINICNEST_APPS_DIR=<folder>  CLINICNEST_NO_START=1
+# Downloaded from downloads.clinicnest.app; when that cannot be reached, from the GitHub Release (some networks
+# block the one or the other). Wherever it comes from, the same signature check decides.
+#
+# Testing: CLINICNEST_DOWNLOAD="<base URL> [<second base URL>]"  CLINICNEST_APPS_DIR=<folder>  CLINICNEST_NO_START=1
 set -euo pipefail
 
-BASE="${CLINICNEST_DOWNLOAD:-https://github.com/clinicnest-app/clinic-nest-updates/releases/latest/download}"
+# where the installers are: our own address first, the GitHub Release second
+SOURCES="${CLINICNEST_DOWNLOAD:-https://downloads.clinicnest.app/latest https://github.com/clinicnest-app/clinic-nest-updates/releases/latest/download}"
 # APP: the app's name; FILE: its disk image's name
 case "${1:-${CLINICNEST_EDITION:-}}" in
   server) APP="ClinicNest Server"; FILE="ClinicNest-Server" ;;
@@ -60,9 +64,18 @@ fi
 
 bold "Downloading $APP …"
 download() { curl -fL --retry 3 --connect-timeout 20 "$@"; }
-download -sS -o "$TMP/SHA256SUMS" "$BASE/SHA256SUMS" || fail "could not download from $BASE – check the internet connection."
-download -sS -o "$TMP/SHA256SUMS.sig" "$BASE/SHA256SUMS.sig" || fail "the signature file is missing. Try again in a few minutes."
-download --progress-bar -o "$TMP/$FILE.dmg" "$BASE/$FILE.dmg" || fail "the download of $FILE.dmg failed. Try again."
+# all three files from the same place, so they belong together
+fetch() {
+  download -sS -o "$TMP/SHA256SUMS" "$1/SHA256SUMS" 2> /dev/null \
+    && download -sS -o "$TMP/SHA256SUMS.sig" "$1/SHA256SUMS.sig" 2> /dev/null \
+    && download --progress-bar -o "$TMP/$FILE.dmg" "$1/$FILE.dmg"
+}
+FROM=""
+for source in $SOURCES; do
+  if fetch "${source%/}"; then FROM="${source%/}"; break; fi
+  echo "Not available from ${source%/} – trying another address …"
+done
+[ -n "$FROM" ] || fail "could not download $APP – check the internet connection (tried: $SOURCES)."
 
 bold "Checking the download …"
 # /usr/bin/openssl (LibreSSL) is on every Mac

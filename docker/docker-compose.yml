@@ -61,6 +61,8 @@ services:
       - app
     ports:
       - "${CLINICNEST_HTTP_PORT:-80}:80"
+      # https: 443 with an internet name. On the clinic network the install script sets "127.0.0.1:" – published
+      # on this computer only, on a free port Docker picks, so 443 stays free for other programs.
       - "${CLINICNEST_HTTPS_PORT:-443}:443"
     environment:
       # ":80" = plain http on the clinic network; a name (clinic.example.com) = https with a free certificate

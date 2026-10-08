@@ -162,7 +162,7 @@
       <div class="cmd"><code id="cmd-win-cmd">powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://updates.clinicnest.app/install.ps1 | iex"</code><button type="button" data-copy="cmd-win-cmd">Copy</button></div>
 
       <div class="label">Or with the installer</div>
-      <a class="button" href="https://github.com/clinicnest-app/clinic-nest-updates/releases/latest/download/ClinicNest_setup.exe">Download ClinicNest_setup.exe<small>64-bit · about 65 MB</small></a>
+      <a class="button" href="https://downloads.clinicnest.app/latest/ClinicNest_setup.exe">Download ClinicNest_setup.exe<small>64-bit · about 65 MB</small></a>
       <p class="or">Run it; Windows may first show a warning – see <a href="#win-smartscreen">below</a>.</p>
     </section>
 
@@ -182,12 +182,12 @@
       </ol>
 
       <div class="label">Or with the disk image</div>
-      <a class="button" href="https://github.com/clinicnest-app/clinic-nest-updates/releases/latest/download/ClinicNest.dmg">Download ClinicNest.dmg<small>Apple silicon · about 70 MB</small></a>
+      <a class="button" href="https://downloads.clinicnest.app/latest/ClinicNest.dmg">Download ClinicNest.dmg<small>Apple silicon · about 70 MB</small></a>
       <p class="or">Open it and drag ClinicNest to Applications; the first start needs one extra step – see <a href="#mac-gatekeeper">below</a>.</p>
     </section>
   </div>
 
-  <div class="tip"><strong>Is the one command safe?</strong> It downloads the same installer as the buttons, from this site only,
+  <div class="tip"><strong>Is the one command safe?</strong> It downloads the same installer as the buttons (from downloads.clinicnest.app, or from GitHub when that is blocked),
     and checks it against a checksum file signed with ClinicNest's key – the same check every automatic update goes through.
     If anything was changed or is incomplete, nothing is installed. You can read the scripts first:
     <a href="install.ps1">install.ps1</a> · <a href="install.sh">install.sh</a>.</div>
@@ -204,6 +204,11 @@
       <details id="win-smartscreen"><summary>"Windows protected your PC" <small>– when running ClinicNest_setup.exe</small></summary>
         <p>The installer is not code-signed yet, so SmartScreen does not know it. Click <em>More info</em>, then <em>Run anyway</em>.
           The one-command install does not show this warning.</p></details>
+      <details><summary>The download does not start or is blocked</summary>
+        <p>Some office and hospital networks block download sites. The same files are on GitHub:
+          <a href="https://github.com/clinicnest-app/clinic-nest-updates/releases/latest">ClinicNest releases</a>.
+          The one-command install tries both places by itself. Otherwise download on another network (e.g. a phone
+          hotspot) and copy the file over.</p></details>
       <details><summary>The antivirus warns or removes ClinicNest</summary>
         <p>New, unsigned programs are sometimes flagged. Restore ClinicNest from the antivirus quarantine and add it as an exception,
           or use the one-command install (the download is checked against ClinicNest's signature).</p></details>
@@ -225,7 +230,8 @@
         <p>Check the internet connection and try again in a few minutes. Behind a company proxy, use the installer button.</p></details>
       <details><summary>The browser does not open</summary>
         <p>Wait 30 seconds after the first start, then open <a href="http://localhost:8080">http://localhost:8080</a> on that computer,
-          or click <em>Open ClinicNest</em> in ClinicNest's window.</p></details>
+          or click <em>Open ClinicNest</em> in ClinicNest's window. If another program already uses port 8080, ClinicNest takes
+          the next free one (8081, …) and keeps it – its window shows the address.</p></details>
     </section>
 
     <section>
@@ -242,6 +248,10 @@
             or quit it while testing.</li>
           <li>The macOS firewall, if switched on (<em>System Settings → Network → Firewall</em>): allow incoming connections for ClinicNest.</li>
         </ol></details>
+      <details><summary>The download does not start or is blocked</summary>
+        <p>Some office and hospital networks block download sites. The same files are on GitHub:
+          <a href="https://github.com/clinicnest-app/clinic-nest-updates/releases/latest">ClinicNest releases</a>.
+          The one-command install tries both places by itself.</p></details>
       <details><summary>"needs Apple silicon" / Intel Mac</summary>
         <p>ClinicNest for Mac currently runs on Apple silicon (M1 and later) only. Use a Windows PC or a newer Mac for the clinic.</p></details>
       <details><summary>Terminal says "Not installed: …"</summary>
@@ -249,7 +259,8 @@
           if it keeps happening, write to <a href="mailto:support@clinicnest.app">support@clinicnest.app</a>.</p></details>
       <details><summary>The browser does not open</summary>
         <p>Wait 30 seconds after the first start, then open <a href="http://localhost:8080">http://localhost:8080</a> on that Mac,
-          or use ClinicNest's menu-bar icon → <em>Open ClinicNest</em>.</p></details>
+          or use ClinicNest's menu-bar icon → <em>Open ClinicNest</em>. If another program already uses port 8080, ClinicNest
+          takes the next free one (8081, …) and keeps it – its window shows the address.</p></details>
     </section>
   </div>
 
@@ -292,11 +303,11 @@
       <p>Like the normal installer – no Docker, no command line. It can run as a background service that starts with
         the computer, also when nobody is signed in. Installs beside ClinicNest without touching it.</p>
       <div class="grid" style="margin-top: .8rem; gap: .6rem">
-        <a class="button" href="https://github.com/clinicnest-app/clinic-nest-updates/releases/latest/download/ClinicNest-Server_setup.exe">Windows: ClinicNest-Server_setup.exe<small>Windows 10 / 11 · about 90 MB · asks for administrator rights</small></a>
-        <a class="button" href="https://github.com/clinicnest-app/clinic-nest-updates/releases/latest/download/ClinicNest-Server.dmg">Mac: ClinicNest-Server.dmg<small>Apple silicon · about 95 MB</small></a>
+        <a class="button" href="https://downloads.clinicnest.app/latest/ClinicNest-Server_setup.exe">Windows: ClinicNest-Server_setup.exe<small>Windows 10 / 11 · about 90 MB · asks for administrator rights</small></a>
+        <a class="button" href="https://downloads.clinicnest.app/latest/ClinicNest-Server.dmg">Mac: ClinicNest-Server.dmg<small>Apple silicon · about 95 MB</small></a>
       </div>
-      <p class="or">Opens at <code>http://&lt;this computer&gt;:8081</code>. Mac: <em>Start with the computer…</em> in its window
-        runs it in the background.</p>
+      <p class="or">Opens at <code>http://&lt;this computer&gt;:8081</code> (the next free port when another program has 8081 –
+        its window shows the address). Mac: <em>Start with the computer…</em> in its window runs it in the background.</p>
       <div class="label">Or with one command (downloads the same installer and checks it)</div>
       <p class="muted" style="margin: 0 0 .3rem">Windows (Command Prompt or PowerShell):</p>
       <div class="cmd"><code id="cmd-srv-win-app">powershell -NoProfile -ExecutionPolicy Bypass -Command "$env:CLINICNEST_EDITION='server'; irm https://updates.clinicnest.app/install.ps1 | iex"</code><button type="button" data-copy="cmd-srv-win-app">Copy</button></div>
