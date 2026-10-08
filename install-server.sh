@@ -189,15 +189,57 @@ if [ -n "$NEW" ]; then
   echo
   echo "Setup code (asked once, at the first-run setup):  $(get CLINICNEST_SETUP_CODE)"
 fi
-cat <<EOF
+# what is where, how to update / stop / uninstall: README.txt in the folder (written on every run), shown now
+if [ "$OS" = Linux ]; then SUDO="sudo "; INSTALL="curl -fsSL $BASE/install-server.sh | sudo bash"
+else SUDO=""; INSTALL="curl -fsSL $BASE/install-server.sh | bash"; fi
+first_ip="$(printf '%s\n' ${ips:-} | head -n 1)"
+[ -n "$first_ip" ] || first_ip="<address of this computer>"
+if [ "$SITE" != ":80" ]; then ADDRESS="https://$SITE"; else ADDRESS="http://$first_ip${suffix:-}"; fi
+cat > "$DIR/README.txt" <<EOF
+ClinicNest Server (Docker) – $(date +%F)
+Open: $ADDRESS
 
-Backups: ClinicNest makes them itself, into $DIR/backups – copy that folder to another place regularly
-(set a backup password in Settings → Backup so the copies are encrypted).
-Update later: run this command again.   Log: cd $DIR && docker compose logs -f app
+WHAT IS WHERE
+  $DIR/
+    docker-compose.yml   the three parts: ClinicNest, PostgreSQL (database), Caddy (web server)
+    Caddyfile            the web server's settings
+    .env                 passwords, setup code, address, port, time zone – keep it private (hidden file: ls -a)
+    backups/             ClinicNest's backups – copy them to another place regularly
+                         (Settings → Backup: set a backup password, so the copies are encrypted)
+    data/                ClinicNest's own files
+    README.txt           this file
+  Docker volume clinicnest_postgres   the database itself
+  Docker volume clinicnest_caddy      the https certificates
+
+EVERYDAY
+  Update to the newest ClinicNest:  $INSTALL
+  See what it is doing:             cd "$DIR" && ${SUDO}docker compose logs -f app
+  Stop:                             cd "$DIR" && ${SUDO}docker compose stop
+  Start again:                      cd "$DIR" && ${SUDO}docker compose up -d
 EOF
 if [ "$OS" = Darwin ]; then
-  cat <<EOF
-Mac: ClinicNest runs while Docker Desktop runs. Docker Desktop → Settings → General → "Start Docker Desktop when
-you sign in" keeps it running after a restart; keep the Mac from sleeping (System Settings → Energy).
+  cat >> "$DIR/README.txt" <<EOF
+  Mac: ClinicNest runs while Docker Desktop runs. Docker Desktop → Settings → General → "Start Docker Desktop
+  when you sign in" keeps it running after a restart; keep the Mac from sleeping (System Settings → Energy).
 EOF
 fi
+cat >> "$DIR/README.txt" <<EOF
+
+UNINSTALL
+  1. Stop it and remove its containers (the data is kept – a new install continues with it):
+       cd "$DIR" && ${SUDO}docker compose down
+  2. Also delete the database – cannot be undone; copy backups/ somewhere first if you want the data:
+       cd "$DIR" && ${SUDO}docker compose down -v
+  3. Remove the downloaded programs (about 600 MB):
+       ${SUDO}docker image rm ghcr.io/clinicnest-app/clinicnest-server:latest postgres:18-alpine caddy:2-alpine
+  4. Delete this folder (with the backups and .env):
+       ${SUDO}rm -rf "$DIR"
+
+Help: support@clinicnest.app · https://updates.clinicnest.app/#server
+EOF
+chmod 644 "$DIR/README.txt"
+echo
+echo "------------------------------------------------------------------------------------------------------------"
+cat "$DIR/README.txt"
+echo "------------------------------------------------------------------------------------------------------------"
+echo "This is also in $DIR/README.txt"

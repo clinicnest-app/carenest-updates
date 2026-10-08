@@ -1,12 +1,20 @@
 # ClinicNest – install or update on Windows with one command (PowerShell, no administrator rights needed):
 #
 #   irm https://updates.clinicnest.app/install.ps1 | iex
+#   $env:CLINICNEST_EDITION='server'; irm https://updates.clinicnest.app/install.ps1 | iex     ClinicNest Server
+#
+# The same from Command Prompt (or PowerShell), in one line:
+#   powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://updates.clinicnest.app/install.ps1 | iex"
+#   powershell -NoProfile -ExecutionPolicy Bypass -Command "$env:CLINICNEST_EDITION='server'; irm https://updates.clinicnest.app/install.ps1 | iex"
 #
 # What it does: downloads the official ClinicNest_setup.exe of the latest release, checks it against SHA256SUMS,
 # whose signature is checked with ClinicNest's public key below (the same key the automatic updates are checked
 # with), runs the installer silently for the current user (%LOCALAPPDATA%\Programs\ClinicNest, Start menu,
 # uninstaller) and starts ClinicNest. Anything changed or incomplete is refused and nothing is installed.
 # The clinic's data is not touched (it lives in C:\ProgramData\Clinic).
+# CLINICNEST_EDITION=server installs ClinicNest Server (PostgreSQL built in) from ClinicNest-Server_setup.exe: for
+# all users in Program Files, as a background service – Windows asks for administrator permission once. It sits
+# beside ClinicNest (data in C:\ProgramData\Clinic Server).
 #
 # Testing: $env:CLINICNEST_DOWNLOAD = <base URL>; $env:CLINICNEST_CHECK_ONLY = 1 (download and check, no install)
 
@@ -18,7 +26,13 @@
     }
     $base = if ($env:CLINICNEST_DOWNLOAD) { $env:CLINICNEST_DOWNLOAD.TrimEnd('/') } `
         else { 'https://github.com/clinicnest-app/clinic-nest-updates/releases/latest/download' }
-    $setupName = 'ClinicNest_setup.exe'
+    $server = $env:CLINICNEST_EDITION -eq 'server'
+    if ($env:CLINICNEST_EDITION -and -not $server) {
+        Write-Host "Unknown CLINICNEST_EDITION '$($env:CLINICNEST_EDITION)' - use nothing (ClinicNest) or 'server'." -ForegroundColor Red
+        throw 'ClinicNest was not installed.'
+    }
+    $title = if ($server) { 'ClinicNest Server' } else { 'ClinicNest' }
+    $setupName = if ($server) { 'ClinicNest-Server_setup.exe' } else { 'ClinicNest_setup.exe' }
 
     function Fail([string] $message) {
         Write-Host ''
@@ -32,7 +46,7 @@
     $tmp = Join-Path ([IO.Path]::GetTempPath()) ('clinicnest-' + [guid]::NewGuid())
     New-Item -ItemType Directory -Path $tmp | Out-Null
     try {
-        Write-Host 'Downloading ClinicNest ...' -ForegroundColor Cyan
+        Write-Host "Downloading $title ..." -ForegroundColor Cyan
         foreach ($file in 'SHA256SUMS', 'SHA256SUMS.sig', $setupName) {
             try {
                 Invoke-WebRequest -UseBasicParsing -Uri "$base/$file" -OutFile (Join-Path $tmp $file)
@@ -67,6 +81,27 @@
         if (-not [Environment]::Is64BitOperatingSystem) { Fail 'ClinicNest needs 64-bit Windows 10 or 11.' }
 
         Write-Host 'Installing ...' -ForegroundColor Cyan
+        if ($server) {
+            # for all users, with the Windows service and the firewall rule: administrator permission (one question)
+            Write-Host 'Windows asks for administrator permission: click Yes.'
+            try {
+                $process = Start-Process -FilePath $setup -ArgumentList '/S' -Verb RunAs -Wait -PassThru
+            } catch {
+                Fail 'administrator permission was not given.'
+            }
+            if ($process.ExitCode -ne 0) { Fail "the installer stopped with code $($process.ExitCode)." }
+            $app = Join-Path $env:ProgramFiles 'ClinicNest Server\ClinicNest.exe'
+            if (-not (Test-Path $app)) { Fail "ClinicNest.exe was not found in $(Split-Path $app)." }
+            Write-Host "Installed: $app"
+            Start-Process -FilePath $app
+            Write-Host ''
+            Write-Host 'Done. ClinicNest Server runs as a background service: it starts with Windows, also when nobody is' -ForegroundColor Green
+            Write-Host 'signed in. First start: about a minute, then open http://localhost:8081' -ForegroundColor Green
+            Write-Host ' - Other computers and phones open http://<this computer>:8081 (the installer opened the firewall for it).'
+            Write-Host ' - It updates itself. Data: C:\ProgramData\Clinic Server; backups: Public Documents\ClinicNest Server\backups.'
+            Write-Host ' - Stop or start it in Windows: Services > ClinicNest Server. Remove it in Settings > Apps.'
+            return
+        }
         # the installer closes a running ClinicNest itself; /S = silent, for the current user
         $process = Start-Process -FilePath $setup -ArgumentList '/S' -Wait -PassThru
         if ($process.ExitCode -ne 0) { Fail "the installer stopped with code $($process.ExitCode)." }

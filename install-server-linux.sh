@@ -223,9 +223,44 @@ if [ -n "$NEW" ]; then
   echo
   echo "Setup code (asked once, at the first-run setup):  $(get CLINICNEST_SETUP_CODE)"
 fi
-cat <<EOF
+first_ip="$(ip -4 -o addr show scope global 2> /dev/null | grep -vE ' (docker[0-9]*|br-[0-9a-f]+|veth[^ ]*) ' | awk '{split($4, a, "/"); print a[1]}' | head -n 1)"
+[ -n "$first_ip" ] || first_ip="<address of this server>"
+# what is where, how to update / stop / uninstall: README.txt (written on every run), shown now
+cat > "$DIR/README.txt" <<EOF
+ClinicNest Server (Linux service) – $(date +%F)
+Open: http://$first_ip:$PORT
 
-Backups: ClinicNest makes them itself, into $DATA/backups – copy that folder to another place regularly
-(set a backup password in Settings → Backup so the copies are encrypted).
-Update later: run this command again.   Log: journalctl -u clinicnest-server -f
+WHAT IS WHERE
+  $DIR/                    the program (app/), its Java (runtime/), this file
+  $DATA/              ClinicNest's own files
+  $DATA/backups/      ClinicNest's backups – copy them to another place regularly
+                                       (Settings → Backup: set a backup password, so the copies are encrypted)
+  $ENVF           database password, setup code, port, time zone – private
+  $UNIT   the service "clinicnest-server"
+  PostgreSQL (the system's package)    database "clinicnest", owner "clinicnest"
+
+EVERYDAY
+  Update to the newest ClinicNest:  curl -fsSL https://updates.clinicnest.app/install-server-linux.sh | sudo bash
+  See what it is doing:             sudo journalctl -u clinicnest-server -f
+  Stop / start / restart:           sudo systemctl stop|start|restart clinicnest-server
+  It starts with the computer by itself.
+
+UNINSTALL
+  1. Stop and remove the service (the data is kept – a new install continues with it):
+       sudo systemctl disable --now clinicnest-server && sudo rm $UNIT && sudo systemctl daemon-reload
+  2. Remove the program:
+       sudo rm -rf $DIR
+  3. Also delete the database – cannot be undone; copy $DATA/backups somewhere first if you want the data:
+       sudo -u postgres psql -c "DROP DATABASE clinicnest" -c "DROP ROLE clinicnest"
+  4. Delete the data, backups and settings, and the service's user:
+       sudo rm -rf $DATA $ENVF && sudo userdel clinicnest
+  PostgreSQL itself stays installed (sudo apt remove postgresql, if nothing else uses it).
+
+Help: support@clinicnest.app · https://updates.clinicnest.app/#server
 EOF
+chmod 644 "$DIR/README.txt"
+echo
+echo "------------------------------------------------------------------------------------------------------------"
+cat "$DIR/README.txt"
+echo "------------------------------------------------------------------------------------------------------------"
+echo "This is also in $DIR/README.txt"

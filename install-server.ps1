@@ -1,6 +1,7 @@
 # ClinicNest server edition – install or update on Windows with Docker Desktop (PowerShell):
 #
 #   irm https://updates.clinicnest.app/install-server.ps1 | iex
+#   (from Command Prompt: powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://updates.clinicnest.app/install-server.ps1 | iex")
 #
 # Sets up ClinicNest + PostgreSQL + Caddy (web server: https or plain http) in %USERPROFILE%\ClinicNest-Server,
 # creates the passwords and a one-time setup code, starts everything and prints the address. Run it again to
@@ -185,6 +186,7 @@
         # -------------------------------------------------------------------------------------- done
         Say 'ClinicNest is running.'
         $site = $settings['CLINICNEST_SITE']
+        $ips = @(); $suffix = ''
         if ($site -and $site -ne ':80') {
             Write-Host "Open:  https://$site"
         } else {
@@ -199,15 +201,52 @@
             Write-Host ''
             Write-Host "Setup code (asked once, at the first-run setup):  $($settings['CLINICNEST_SETUP_CODE'])" -ForegroundColor Yellow
         }
+        # what is where, how to update / stop / uninstall: README.txt in the folder (written on every run), shown now
+        $address = if ($site -and $site -ne ':80') { "https://$site" } elseif ($ips) { "http://$($ips[0])$suffix" } else { "http://<address of this computer>$suffix" }
+        $readme = @"
+ClinicNest Server (Docker) - $(Get-Date -Format yyyy-MM-dd)
+Open: $address
+
+WHAT IS WHERE
+  $dir\
+    docker-compose.yml   the three parts: ClinicNest, PostgreSQL (database), Caddy (web server)
+    Caddyfile            the web server's settings
+    .env                 passwords, setup code, address, port, time zone - keep it private
+    backups\             ClinicNest's backups - copy them to another place regularly
+                         (Settings -> Backup: set a backup password, so the copies are encrypted)
+    data\                ClinicNest's own files
+    README.txt           this file
+  Docker volume clinicnest_postgres   the database itself
+  Docker volume clinicnest_caddy      the https certificates
+
+EVERYDAY  (in PowerShell)
+  Update to the newest ClinicNest:  powershell -NoProfile -ExecutionPolicy Bypass -Command "irm $base/install-server.ps1 | iex"
+  See what it is doing:             cd "$dir"; docker compose logs -f app
+  Stop:                             cd "$dir"; docker compose stop
+  Start again:                      cd "$dir"; docker compose up -d
+  ClinicNest runs while Docker Desktop runs: in Docker Desktop -> Settings -> General keep "Start Docker Desktop
+  when you sign in" on; this computer must stay on and signed in, without sleep.
+  Other computers cannot open it? Windows Security -> Firewall -> Allow an app through firewall -> tick
+  "Private" for Docker Desktop Backend.
+
+UNINSTALL  (in PowerShell)
+  1. Stop it and remove its containers (the data is kept - a new install continues with it):
+       cd "$dir"; docker compose down
+  2. Also delete the database - cannot be undone; copy backups\ somewhere first if you want the data:
+       cd "$dir"; docker compose down -v
+  3. Remove the downloaded programs (about 600 MB):
+       docker image rm ghcr.io/clinicnest-app/clinicnest-server:latest postgres:18-alpine caddy:2-alpine
+  4. Delete this folder (with the backups and .env):
+       cd ~; Remove-Item -Recurse -Force "$dir"
+
+Help: support@clinicnest.app - https://updates.clinicnest.app/#server
+"@
+        [IO.File]::WriteAllText((Join-Path $dir 'README.txt'), $readme.Replace("`r`n", "`n").Replace("`n", "`r`n"), (New-Object Text.UTF8Encoding $false))
         Write-Host ''
-        Write-Host "Backups: ClinicNest makes them itself, into $(Join-Path $dir 'backups') - copy that folder to another"
-        Write-Host 'place regularly (set a backup password in Settings -> Backup so the copies are encrypted).'
-        Write-Host 'Update later: run this command again.'
-        Write-Host ''
-        Write-Host 'Windows: ClinicNest runs while Docker Desktop runs. In Docker Desktop -> Settings -> General, keep'
-        Write-Host '"Start Docker Desktop when you sign in" on; this computer must stay on and signed in, without sleep.'
-        Write-Host 'If other computers cannot open it: Windows Security -> Firewall -> Allow an app through firewall ->'
-        Write-Host 'tick "Private" for Docker Desktop Backend.'
+        Write-Host ('-' * 100)
+        Write-Host $readme
+        Write-Host ('-' * 100)
+        Write-Host "This is also in $(Join-Path $dir 'README.txt')"
     } finally {
         Pop-Location
     }
