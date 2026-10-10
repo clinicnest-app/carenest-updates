@@ -38,7 +38,7 @@
 	<svg aria-hidden="true" class="auto astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg>
 </template>
 		<link rel="stylesheet" href="/_astro/print.ehPL0gv-.css" media="print">
-	<link rel="stylesheet" href="/_astro/middleware.B8BF1TAf.css">
+	<link rel="stylesheet" href="/_astro/middleware.DY2lwe0p.css">
 <style>@layer starlight.components{svg:where(.astro-hkc32dio){color:var(--sl-icon-color);font-size:var(--sl-icon-size,1em);width:1em;height:1em;overflow:visible}}
 </style><script type="module" src="/_astro/page.cNngjUgL.js"></script></head>
 	<body class="astro-g5ptsecz">
@@ -165,7 +165,7 @@
 </button>
 				<script type="module">var e=class extends HTMLElement{constructor(){super();let e=matchMedia(`(min-width: 50em)`),t=()=>{this.popover=e.matches?null:`auto`};t(),e.addEventListener(`change`,()=>t()),this.addEventListener(`toggle`,({newState:e})=>this.trapFocus(e===`open`))}trapFocus(e){document.querySelectorAll(`.main-frame, .sl-skip-link`).forEach(t=>{t.toggleAttribute(`inert`,e)})}};customElements.define(`sl-sidebar-pane`,e);</script><sl-sidebar-pane popover id="starlight__sidebar" class="sidebar-pane astro-yntsjkba">
 					<div class="sidebar-content sl-flex astro-yntsjkba">
-						<sl-sidebar-state-persist data-hash="06nfj2m" class="astro-ipdry5cl">
+						<sl-sidebar-state-persist data-hash="068e610" class="astro-ipdry5cl">
 	<script aria-hidden="true">
 		(() => {
 			try {
@@ -225,6 +225,11 @@
 			</li><li class="astro-rmhv4bp6">
 				<a href="/install/mac/" class="astro-rmhv4bp6">
 						<span class="astro-rmhv4bp6">Install on a Mac</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/install/linux/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Install on Linux</span>
 						
 					</a>
 			</li><li class="astro-rmhv4bp6">
@@ -824,10 +829,10 @@ This creates the clinic’s <strong>WhatsApp Business account</strong>.</li>
 <p>Open <strong>Settings → WhatsApp</strong>.</p>
 </li>
 <li>
-<p>Tick <strong>Send WhatsApp from ClinicNest</strong>.</p>
+<p>Tick <strong>Enable WhatsApp sending</strong>. Beside <strong>Provider: not set</strong>, press <strong>Add</strong>.</p>
 </li>
 <li>
-<p>Under <strong>Provider</strong>, choose <strong>WhatsApp Cloud API (Meta)</strong>, or <strong>Other provider</strong> when you use a WhatsApp provider.</p>
+<p>Choose <strong>WhatsApp Cloud API (Meta)</strong>, or <strong>Other provider</strong> when you use a WhatsApp provider.</p>
 </li>
 <li>
 <p>Fill in:</p>
@@ -855,20 +860,17 @@ This creates the clinic’s <strong>WhatsApp Business account</strong>.</li>
 <td><strong>Template name</strong></td>
 <td>The template’s name, for example <code dir="auto">visit_reminder</code></td>
 </tr>
-<tr>
-<td><strong>Reminder text</strong></td>
-<td>The approved wording, with <code dir="auto">{name}</code>, <code dir="auto">{clinic}</code>, <code dir="auto">{date}</code> and <code dir="auto">{clinicPhone}</code> in place of <code dir="auto">{{1}}</code> to <code dir="auto">{{4}}</code></td>
-</tr>
 </tbody>
 </table>
 </li>
 <li>
 <p>If your template is in another language than English, or has its parts in another order, change the <strong>Body</strong>
-under <strong>Request sent to the provider</strong> to match: the language code is <code dir="auto">"en"</code> there, and the parts are listed in
+under <strong>Advanced: the request sent to the provider</strong> to match: the language code is <code dir="auto">"en"</code> there, and the parts are listed in
 the order they are sent.</p>
 </li>
 <li>
-<p>Press <strong>Save</strong>.</p>
+<p>Press <strong>Done</strong>. On the page, type the <strong>Reminder text</strong>: the approved wording, with <code dir="auto">{name}</code>, <code dir="auto">{clinic}</code>, <code dir="auto">{date}</code>
+and <code dir="auto">{clinicPhone}</code> in place of <code dir="auto">{{1}}</code> to <code dir="auto">{{4}}</code>. Changes are saved by themselves; wait for <strong>Saved</strong>.</p>
 </li>
 <li>
 <p>Under <strong>Send a test message</strong>, type your own mobile number and press <strong>Send test WhatsApp</strong>.</p>

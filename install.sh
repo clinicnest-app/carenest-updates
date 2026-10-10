@@ -1,9 +1,15 @@
 #!/bin/bash
-# ClinicNest – install or update on a Mac with one command (Terminal):
+# ClinicNest – install or update on a Mac or on a Linux desktop with one command (Terminal):
 #
 #   curl -fsSL https://updates.clinicnest.app/install.sh | bash
-#   curl -fsSL https://updates.clinicnest.app/install.sh | bash -s server     ClinicNest Server (PostgreSQL built in)
+#   curl -fsSL https://updates.clinicnest.app/install.sh | bash -s server     ClinicNest Server (PostgreSQL built in) – Mac
 #
+# Linux (x64): downloads ClinicNest-linux.tar.gz, checks it the same way, unpacks it into ~/.local/opt/ClinicNest
+# (no administrator password), adds ClinicNest to the applications menu and to the programs that start with the
+# computer (CLINICNEST_NO_AUTOSTART=1: not), and starts it. The clinic's data is in ~/.local/share/clinic.
+# The server edition on Linux is installed with install-server.sh (Docker) or install-server-linux.sh.
+#
+# On a Mac –
 # What it does: downloads the official ClinicNest.dmg of the latest release, checks it against SHA256SUMS, whose
 # signature is checked with ClinicNest's public key below (the same key the automatic updates are checked with),
 # copies ClinicNest.app to Applications and starts it. Anything changed or incomplete is refused and nothing is
@@ -20,7 +26,7 @@ set -euo pipefail
 
 # where the installers are: our own address first, the GitHub Release second
 SOURCES="${CLINICNEST_DOWNLOAD:-https://downloads.clinicnest.app/latest https://github.com/clinicnest-app/clinic-nest-updates/releases/latest/download}"
-# APP: the app's name; FILE: its disk image's name
+# APP: the app's name; FILE: its disk image's name without the ending (see DMG below)
 case "${1:-${CLINICNEST_EDITION:-}}" in
   server) APP="ClinicNest Server"; FILE="ClinicNest-Server" ;;
   "") APP="ClinicNest"; FILE="ClinicNest" ;;
@@ -30,13 +36,31 @@ esac
 bold() { printf '\033[1m%s\033[0m\n' "$*"; }
 fail() { printf '\n\033[31mNot installed:\033[0m %s\n' "$*" >&2; exit 1; }
 
-[ "$(uname -s)" = "Darwin" ] || fail "this is the Mac installer. On Windows, use the PowerShell command from https://updates.clinicnest.app"
-[ "$(uname -m)" = "arm64" ] || fail "ClinicNest for Mac needs Apple silicon (M1 or later). Intel Macs are not supported yet."
+# DMG: the file to download – a Mac's disk image, or the Linux package
+OS="$(uname -s)"
+if [ "$OS" = "Linux" ]; then
+  [ "$FILE" = ClinicNest ] || fail "ClinicNest Server on Linux is installed otherwise – see https://updates.clinicnest.app/server-edition/linux/"
+  [ "$(uname -m)" = "x86_64" ] || fail "ClinicNest for Linux needs a 64-bit Intel / AMD processor (this computer says: $(uname -m))."
+  DMG="$FILE-linux.tar.gz"
+  for tool in curl openssl tar sha256sum; do
+    command -v "$tool" > /dev/null 2>&1 || fail "the program \"$tool\" is needed and is not installed (e.g. sudo apt install $tool)."
+  done
+elif [ "$OS" != "Darwin" ]; then
+  fail "this installer is for a Mac or a Linux desktop. On Windows, use the PowerShell command from https://updates.clinicnest.app"
+# a Mac: Apple silicon, or Intel ("…-intel.dmg"). A Terminal that runs under Rosetta says x86_64 on Apple
+# silicon too, so the processor itself is asked first.
+elif [ "$(sysctl -n hw.optional.arm64 2>/dev/null)" = "1" ] || [ "$(uname -m)" = "arm64" ]; then
+  DMG="$FILE.dmg"
+elif [ "$(uname -m)" = "x86_64" ]; then
+  DMG="$FILE-intel.dmg"
+else
+  fail "ClinicNest for Mac needs Apple silicon or an Intel processor (this Mac says: $(uname -m))."
+fi
 
 TMP="$(mktemp -d)"
 MOUNT="$TMP/mount"
 cleanup() {
-  hdiutil detach -quiet "$MOUNT" 2>/dev/null || true
+  [ "$OS" != "Darwin" ] || hdiutil detach -quiet "$MOUNT" 2>/dev/null || true
   rm -rf "$TMP"
 }
 trap cleanup EXIT
@@ -68,7 +92,7 @@ download() { curl -fL --retry 3 --connect-timeout 20 "$@"; }
 fetch() {
   download -sS -o "$TMP/SHA256SUMS" "$1/SHA256SUMS" 2> /dev/null \
     && download -sS -o "$TMP/SHA256SUMS.sig" "$1/SHA256SUMS.sig" 2> /dev/null \
-    && download --progress-bar -o "$TMP/$FILE.dmg" "$1/$FILE.dmg"
+    && download --progress-bar -o "$TMP/$DMG" "$1/$DMG"
 }
 FROM=""
 for source in $SOURCES; do
@@ -79,15 +103,84 @@ done
 
 bold "Checking the download …"
 # /usr/bin/openssl (LibreSSL) is on every Mac
-/usr/bin/openssl dgst -sha256 -verify "$TMP/clinicnest.pub" -signature "$TMP/SHA256SUMS.sig" "$TMP/SHA256SUMS" >/dev/null 2>&1 \
+OPENSSL=/usr/bin/openssl
+[ -x "$OPENSSL" ] || OPENSSL=openssl
+"$OPENSSL" dgst -sha256 -verify "$TMP/clinicnest.pub" -signature "$TMP/SHA256SUMS.sig" "$TMP/SHA256SUMS" >/dev/null 2>&1 \
   || fail "the checksum file is not signed by ClinicNest. Nothing was installed – please tell support@clinicnest.app."
-expected="$(awk -v f="$FILE.dmg" '{ name = $2; sub(/^\*/, "", name) } name == f { print $1 }' "$TMP/SHA256SUMS")"
-actual="$(shasum -a 256 "$TMP/$FILE.dmg" | awk '{ print $1 }')"
+expected="$(awk -v f="$DMG" '{ name = $2; sub(/^\*/, "", name) } name == f { print $1 }' "$TMP/SHA256SUMS")"
+if [ "$OS" = "Linux" ]; then
+  actual="$(sha256sum "$TMP/$DMG" | awk '{ print $1 }')"
+else
+  actual="$(shasum -a 256 "$TMP/$DMG" | awk '{ print $1 }')"
+fi
 [ -n "$expected" ] && [ "$expected" = "$actual" ] \
   || fail "the download is damaged or was changed on the way. Nothing was installed – try again."
 echo "Signature and checksum OK."
 
 bold "Installing …"
+if [ "$OS" = "Linux" ]; then
+  # the program's folder; the clinic's data is elsewhere (~/.local/share/clinic) and is not touched
+  DEST="${CLINICNEST_APPS_DIR:-$HOME/.local/opt}"
+  HOMEDIR="$DEST/$APP"
+  # an update: close the running copy first
+  if pgrep -f "clinicnest.home=$HOMEDIR" > /dev/null 2>&1; then
+    echo "Closing the running $APP …"
+    pkill -TERM -f "clinicnest.home=$HOMEDIR" || true
+    for _ in $(seq 1 30); do pgrep -f "clinicnest.home=$HOMEDIR" > /dev/null 2>&1 || break; sleep 1; done
+  fi
+  mkdir -p "$DEST"
+  rm -rf "$HOMEDIR.new"
+  mkdir "$HOMEDIR.new"
+  tar -xzf "$TMP/$DMG" -C "$HOMEDIR.new" --strip-components 1 || fail "the package could not be unpacked."
+  [ -x "$HOMEDIR.new/$APP" ] && [ -x "$HOMEDIR.new/runtime/bin/java" ] || fail "the package is incomplete."
+  # this computer's own launcher settings (e.g. another update address) stay
+  if [ -f "$HOMEDIR/launcher.properties" ]; then cp -p "$HOMEDIR/launcher.properties" "$HOMEDIR.new/"; fi
+  rm -rf "$HOMEDIR"
+  mv "$HOMEDIR.new" "$HOMEDIR"
+  echo "Installed: $HOMEDIR"
+
+  # in the applications menu, and started with the computer (the launcher's Uninstall removes both again)
+  entry() {
+    mkdir -p "$(dirname "$1")"
+    cat > "$1" <<ENTRY
+[Desktop Entry]
+Type=Application
+Name=$APP
+Comment=Patient records, OPD, prescriptions and follow-ups for the clinic
+Exec="$HOMEDIR/$APP"
+Icon=$HOMEDIR/clinicnest.png
+Terminal=false
+Categories=Office;MedicalSoftware;
+ENTRY
+  }
+  if [ -z "${CLINICNEST_APPS_DIR:-}" ]; then
+    entry "${XDG_DATA_HOME:-$HOME/.local/share}/applications/clinicnest.desktop"
+    if [ -z "${CLINICNEST_NO_AUTOSTART:-}" ]; then entry "${XDG_CONFIG_HOME:-$HOME/.config}/autostart/clinicnest.desktop"; fi
+  fi
+
+  STARTED=""
+  if [ -z "${CLINICNEST_NO_START:-}" ] && [ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]; then
+    bold "Starting $APP …"
+    nohup "$HOMEDIR/$APP" > /dev/null 2>&1 &
+    STARTED=1
+  fi
+  if [ -n "$STARTED" ]; then
+    echo
+    echo "Done. ClinicNest opens in the browser in a moment (first start: about 30 seconds)."
+  else
+    echo
+    echo "Done. Start ClinicNest from the applications menu, or with: \"$HOMEDIR/$APP\""
+  fi
+  cat <<'NEXT'
+ • Phones and other computers in the clinic open the address shown in ClinicNest's window. If they cannot,
+   this computer's firewall may be closed for it:
+     Fedora, openSUSE:  sudo firewall-cmd --add-port=8080/tcp --permanent && sudo firewall-cmd --reload
+     Ubuntu with ufw:   sudo ufw allow 8080/tcp
+ • ClinicNest updates itself; run this command again only to repair an installation.
+ • It starts with the computer after you sign in. Remove it later with the Uninstall button in its window.
+NEXT
+  exit 0
+fi
 DEST="${CLINICNEST_APPS_DIR:-}"
 if [ -z "$DEST" ]; then
   DEST="/Applications"
@@ -101,7 +194,7 @@ if [ -z "$DEST" ]; then
 fi
 mkdir -p "$DEST"
 mkdir -p "$MOUNT"
-hdiutil attach -quiet -nobrowse -readonly -mountpoint "$MOUNT" "$TMP/$FILE.dmg" || fail "the disk image could not be opened."
+hdiutil attach -quiet -nobrowse -readonly -mountpoint "$MOUNT" "$TMP/$DMG" || fail "the disk image could not be opened."
 [ -d "$MOUNT/$APP.app" ] || fail "$APP.app is missing in the disk image."
 rm -rf "$DEST/$APP.app.new"
 ditto "$MOUNT/$APP.app" "$DEST/$APP.app.new"
