@@ -1,27 +1,12 @@
 <!doctype html>
+<!-- The licence terms were at this address; they are at /licence/ now. Kept so that old links still arrive. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ClinicNest Community Edition – licence terms</title>
-<style>
-  :root { --teal: #0b6e78; --ink: #16282b; --muted: #5b6f73; --line: #d5dfe1; --bg: #f4f7f8; --card: #fff; }
-  @media (prefers-color-scheme: dark) { :root { --teal: #2ba6b3; --ink: #e6eced; --muted: #9aa9ac; --line: #2e2e2e; --bg: #0a0a0a; --card: #161616; } }
-  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; background: var(--bg); color: var(--ink); line-height: 1.55; }
-  main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1rem 4rem; }
-  a { color: var(--teal); }
-  pre { white-space: pre-wrap; font: inherit; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.5rem; margin-top: 1rem; }
-</style>
+<link rel="canonical" href="https://updates.clinicnest.app/licence/">
+<meta http-equiv="refresh" content="0; url=/licence/">
 </head>
-<body>
-<main>
-  <a href="./">← ClinicNest</a>
-  <pre id="terms">Loading the licence terms …</pre>
-  <noscript><p>The terms are in <a href="LICENCE.txt">LICENCE.txt</a>.</p></noscript>
-</main>
-<script>
-  fetch('LICENCE.txt').then(r => r.text()).then(t => { document.getElementById('terms').textContent = t.trim(); })
-    .catch(() => { document.getElementById('terms').innerHTML = 'The terms are in <a href="LICENCE.txt">LICENCE.txt</a>.'; });
-</script>
-</body>
+<body><p>The licence terms are at <a href="/licence/">updates.clinicnest.app/licence/</a>.</p></body>
 </html>

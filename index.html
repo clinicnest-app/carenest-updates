@@ -1,446 +1,783 @@
-<!doctype html>
-<!-- The public download page (https://updates.clinicnest.app/). Source: the ClinicNest source repository,
-     .github/updates-repo/site/index.html – the Release workflow publishes it with install.sh / install.ps1. -->
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<title>ClinicNest – free clinic management software for small clinics</title>
-<meta name="description" content="ClinicNest Community Edition: free clinic management software for small clinics – patient records, OPD tokens, eye and ENT forms, prescriptions, follow-ups and receipts. Runs on the clinic's own Windows PC or Mac, also without internet.">
-<link rel="canonical" href="https://updates.clinicnest.app/">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="ClinicNest">
-<meta property="og:title" content="ClinicNest – free clinic management software">
-<meta property="og:description" content="Patient records, OPD tokens, prescriptions and follow-ups for small clinics. On the clinic's own computer, works without internet. Free.">
-<meta property="og:url" content="https://updates.clinicnest.app/">
-<meta name="twitter:card" content="summary">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "ClinicNest Community Edition",
-  "applicationCategory": "MedicalApplication",
-  "operatingSystem": "Windows 10, Windows 11, macOS (Apple silicon)",
-  "description": "Free clinic management software for small clinics: patient records, OPD tokens, eye and ENT forms, prescriptions, follow-ups and receipts. Runs on the clinic's own computer and works without internet.",
-  "url": "https://updates.clinicnest.app/",
-  "downloadUrl": "https://updates.clinicnest.app/#install",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
-  "publisher": { "@type": "Organization", "name": "ClinicNest", "email": "support@clinicnest.app" }
-}
-</script>
-<style>
-  :root { --teal: #2563eb; --teal-dark: #1d4ed8; --ink: #14213d; --muted: #5b6577; --line: #d5dbe6; --bg: #f4f6fb; --card: #fff;
-    --on-teal: #fff; --code: #0f172a; --on-code: #e2e8f0; --warn: #b45309; --ok: #15803d; }
-  @media (prefers-color-scheme: dark) {
-    :root { --teal: #60a5fa; --teal-dark: #93c5fd; --ink: #e6eaf2; --muted: #9aa3b5; --line: #263042; --bg: #0b1120; --card: #131b2e;
-      --on-teal: #0b1b3d; --code: #020617; --on-code: #e2e8f0; --warn: #fbbf24; --ok: #4ade80; }
-  }
-  * { box-sizing: border-box; }
-  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; background: var(--bg); color: var(--ink); line-height: 1.5; }
-  main { max-width: 60rem; margin: 0 auto; padding: 3rem 1rem 4rem; }
-  header { text-align: center; padding: 1rem 0 1.5rem; }
-  .logo { width: 64px; height: 64px; display: inline-block; }
-  h1 { font-size: 2.4rem; margin: .75rem 0 0; }
-  .edition { display: inline-block; margin-top: .6rem; padding: .2rem .8rem; border: 1px solid var(--teal); color: var(--teal);
-    border-radius: 999px; font-weight: 600; font-size: .9rem; }
-  .lead { font-size: 1.15rem; color: var(--muted); max-width: 38rem; margin: 1rem auto 0; }
-  h2 { font-size: 1.35rem; margin: 2.5rem 0 1rem; }
-  h3 { margin: 0 0 .5rem; font-size: 1.05rem; }
-  a { color: var(--teal); }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: .9rem; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.15rem; min-width: 0; }
-  .card > h3 { color: var(--teal); }
-  .card p { margin: 0; color: var(--muted); font-size: .95rem; }
-  .features .card h3 { font-size: 1rem; margin-bottom: .3rem; }
-
-  /* install */
-  .os { display: flex; align-items: center; gap: .5rem; }
-  .os svg { width: 22px; height: 22px; flex: none; }
-  ol.steps, ul.steps { margin: .4rem 0 0; padding-left: 1.3rem; }
-  ol.steps li, ul.steps li { margin: .35rem 0; }
-  .label { font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 1rem 0 .3rem; }
-  .cmd { display: flex; align-items: stretch; background: var(--code); color: var(--on-code); border-radius: 10px; overflow: hidden; }
-  .cmd code { flex: 1; min-width: 0; padding: .7rem .8rem; font: .88rem/1.4 ui-monospace, Menlo, Consolas, monospace; overflow-x: auto; white-space: nowrap; }
-  .cmd button { border: 0; background: #1e293b; color: #e2e8f0; padding: 0 .9rem; cursor: pointer; font: inherit; font-size: .85rem; }
-  .cmd button:hover { background: #334155; }
-  a.button { display: block; text-align: center; padding: .8rem 1rem; border-radius: 12px; font-weight: 600; text-decoration: none;
-    background: var(--teal); color: var(--on-teal); }
-  a.button:hover { background: var(--teal-dark); }
-  a.button small { display: block; font-weight: 400; opacity: .85; }
-  a.button.cta { display: inline-block; margin-top: 1.2rem; padding: .85rem 1.6rem; }
-  .ctas { display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; gap: .75rem; margin-top: 1.2rem; }
-  .ctas a.button.cta { margin-top: 0; }
-  a.button.secondary { display: inline-flex; flex-direction: column; justify-content: center; padding: .85rem 1.6rem;
-    background: var(--card); color: var(--teal); border: 2px solid var(--teal); }
-  a.button.secondary:hover { background: var(--teal); color: var(--on-teal); }
-  a.button.secondary .heart { color: #e11d48; }
-  a.button.secondary:hover .heart { color: inherit; }
-  .or { text-align: center; color: var(--muted); font-size: .85rem; margin: .7rem 0 0; }
-  .muted { color: var(--muted); font-size: .92rem; }
-  .version { color: var(--muted); font-size: .9rem; margin-top: .9rem; text-align: center; }
-  .tip { border-left: 3px solid var(--teal); padding: .5rem .8rem; background: var(--card); border-radius: 0 10px 10px 0; color: var(--muted); font-size: .93rem; margin-top: 1rem; }
-  .tip strong { color: var(--ink); }
-
-  /* problems */
-  details { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: .7rem 1rem; margin: .5rem 0; }
-  summary { cursor: pointer; font-weight: 600; }
-  summary small { font-weight: 400; color: var(--muted); }
-  details p, details ol, details ul { margin: .5rem 0 0; color: var(--muted); font-size: .95rem; }
-  details li { margin: .2rem 0; }
-  kbd { font: .85em ui-monospace, Menlo, Consolas, monospace; border: 1px solid var(--line); border-radius: 4px; padding: 0 .3rem; background: var(--bg); color: var(--ink); }
-  em { font-style: normal; font-weight: 600; color: var(--ink); }
-
-  .support .card p, .support .card li { color: var(--muted); font-size: .95rem; }
-  .support .card ul, .support .card ol { margin: .4rem 0 0; padding-left: 1.2rem; }
-  .support .small { margin-top: .6rem; font-size: .85rem; }
-  .links { display: flex; flex-wrap: wrap; gap: .4rem 1rem; margin-top: .75rem; }
-  .links a, .linklike { color: var(--teal); font-weight: 600; text-decoration: none; font: inherit; font-weight: 600;
-    background: none; border: 0; padding: 0; cursor: pointer; }
-  .links a:hover, .linklike:hover { text-decoration: underline; }
-  .badge { font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--warn);
-    border: 1px solid currentColor; border-radius: 999px; padding: .05rem .5rem; vertical-align: middle; margin-left: .3rem; }
-  .card.soon { border-style: dashed; }
-  footer { margin-top: 3rem; text-align: center; color: var(--muted); font-size: .85rem; }
-</style>
-</head>
-<body>
-<main>
-  <header>
-    <svg class="logo" role="img" aria-label="ClinicNest" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-      <circle cx="128" cy="128" r="128" fill="#2563eb"/>
-      <g transform="translate(128 130) scale(6.6) translate(-12 -11.5)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-        <path d="M11 2v2M5 2v2m0-1H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1"/><path d="M8 15a6 6 0 0 0 12 0v-3"/><circle cx="20" cy="10" r="2"/>
-      </g>
-    </svg>
-    <h1>ClinicNest</h1>
-    <div class="edition">Community Edition · free</div>
-    <p class="lead">Free clinic management software for small clinics: patient records, OPD, prescriptions and follow-ups.
-      It runs on the clinic's own computer, works without internet, and keeps the data in the clinic.</p>
-    <div class="ctas">
-      <a class="button cta" href="#install">Install ClinicNest<small>Windows 10 / 11 · Mac with Apple silicon</small></a>
-      <a class="button secondary" href="#support"><span><span class="heart" aria-hidden="true">♥</span> Support this project</span><small>by sharing it · feedback · ideas · sponsoring</small></a>
-    </div>
-  </header>
-
-  <h2>What the Community Edition includes</h2>
-  <div class="grid features">
-    <div class="card"><h3>Patients</h3><p>Registration, quick search by name, phone or ID, and each patient's visits and results over time.</p></div>
-    <div class="card"><h3>OPD queue</h3><p>Today's patients with daily token numbers: waiting, seen, and scheduled follow-ups.</p></div>
-    <div class="card"><h3>Specialty forms</h3><p>Eye clinic and ENT clinic forms (examination, refraction, audiometry, procedure notes), plus vitals and visit notes.</p></div>
-    <div class="card"><h3>Diagnosis and prescription</h3><p>ICD-10 diagnoses, a medicine list with usual doses, and printed prescriptions on your letterhead.</p></div>
-    <div class="card"><h3>Photos and documents</h3><p>Take photos with the phone's camera during the visit; add reports and old prescriptions as PDF.</p></div>
-    <div class="card"><h3>Follow-ups and reminders</h3><p>Next-visit dates, a calendar, and day-before reminders by call, SMS or WhatsApp through the clinic's own provider account.</p></div>
-    <div class="card"><h3>Charges and receipts</h3><p>Fees, discounts, payments by cash, UPI or card, printed receipts and the day's collection.</p></div>
-    <div class="card"><h3>Whole clinic, one computer</h3><p>Installed on one PC; reception, consulting room and phones open it in the browser. Only devices the doctor approved get in.</p></div>
-    <div class="card"><h3>Your data stays with you</h3><p>Daily automatic backups, encrypted with your backup password, and no cloud account.</p></div>
-  </div>
-
-
-  <h2 id="install">Install</h2>
-  <p class="muted">Install ClinicNest on <strong>one computer</strong> in the clinic. Reception, the consulting room and phones
-    then open it in the browser over the clinic's Wi-Fi. No administrator password is needed.
-    Many users, your own server or access from outside? See the <a href="#server">server edition</a>.</p>
-
-  <div class="grid">
-    <!-- Windows -->
-    <section class="card">
-      <h3 class="os"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5.5 10.5 4.5v7H3zM11.5 4.4 21 3v8.5h-9.5zM3 12.5h7.5v7L3 18.5zM11.5 12.5H21V21l-9.5-1.4z"/></svg>Windows 10 / 11</h3>
-
-      <div class="label">Recommended: one command</div>
-      <ol class="steps">
-        <li>Press <kbd>Windows</kbd>, type <em>PowerShell</em> and open <em>Windows PowerShell</em> – not <em>Command Prompt</em>,
-          and not as administrator.</li>
-        <li>Copy this line, paste it into PowerShell (right-click) and press <kbd>Enter</kbd>:</li>
-      </ol>
-      <div class="cmd"><code id="cmd-win">irm https://updates.clinicnest.app/install.ps1 | iex</code><button type="button" data-copy="cmd-win">Copy</button></div>
-      <ol class="steps" start="3">
-        <li>ClinicNest downloads, is checked, installs and starts. The browser opens in about 30 seconds.</li>
-        <li>If <em>Windows Firewall</em> asks about ClinicNest / Java: tick <em>Private networks</em> and click <em>Allow</em>.</li>
-      </ol>
-      <p class="muted">Already in <em>Command Prompt</em> (<code>cmd</code>)? Use this line there instead:</p>
-      <div class="cmd"><code id="cmd-win-cmd">powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://updates.clinicnest.app/install.ps1 | iex"</code><button type="button" data-copy="cmd-win-cmd">Copy</button></div>
-
-      <div class="label">Or with the installer</div>
-      <a class="button" href="https://downloads.clinicnest.app/latest/ClinicNest_setup.exe">Download ClinicNest_setup.exe<small>64-bit · about 65 MB</small></a>
-      <p class="or">Run it; Windows may first show a warning – see <a href="#win-smartscreen">below</a>.</p>
-    </section>
-
-    <!-- Mac -->
-    <section class="card">
-      <h3 class="os"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.9-.9-3.1-.8-1.6 0-3.1.9-3.9 2.4-1.7 2.9-.4 7.2 1.2 9.6.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.1.8 1.3 0 2.1-1.2 2.9-2.4.9-1.3 1.3-2.6 1.3-2.7 0 0-2.7-1-2.7-4.1zM14 5.3c.7-.8 1.1-1.9 1-3-1 0-2.1.6-2.8 1.4-.6.7-1.2 1.8-1 2.9 1.1.1 2.1-.5 2.8-1.3z"/></svg>Mac · Apple silicon (M1 and later)</h3>
-
-      <div class="label">Recommended: one command</div>
-      <ol class="steps">
-        <li>Open <em>Terminal</em> (Applications → Utilities, or <kbd>⌘</kbd> + <kbd>Space</kbd> and type <em>Terminal</em>).</li>
-        <li>Copy this line, paste it into Terminal and press <kbd>Return</kbd>:</li>
-      </ol>
-      <div class="cmd"><code id="cmd-mac">curl -fsSL https://updates.clinicnest.app/install.sh | bash</code><button type="button" data-copy="cmd-mac">Copy</button></div>
-      <ol class="steps" start="3">
-        <li>ClinicNest downloads, is checked, is copied to Applications and starts. The browser opens in about 30 seconds.</li>
-        <li>If the Mac asks <em>"Allow ClinicNest to find devices on your local network?"</em>, click <em>Allow</em>.</li>
-      </ol>
-
-      <div class="label">Or with the disk image</div>
-      <a class="button" href="https://downloads.clinicnest.app/latest/ClinicNest.dmg">Download ClinicNest.dmg<small>Apple silicon · about 70 MB</small></a>
-      <p class="or">Open it and drag ClinicNest to Applications; the first start needs one extra step – see <a href="#mac-gatekeeper">below</a>.</p>
-    </section>
-  </div>
-
-  <div class="tip"><strong>Is the one command safe?</strong> It downloads the same installer as the buttons (from downloads.clinicnest.app, or from GitHub when that is blocked),
-    and checks it against a checksum file signed with ClinicNest's key – the same check every automatic update goes through.
-    If anything was changed or is incomplete, nothing is installed. You can read the scripts first:
-    <a href="install.ps1">install.ps1</a> · <a href="install.sh">install.sh</a>.</div>
-  <div class="tip"><strong>After installing:</strong> the first start asks for the clinic's details and creates the doctor's login.
-    The other computers and phones in the clinic open the address shown in ClinicNest's status window under
-    <em>"On the other computers in the clinic"</em> (for example <code>http://192.168.1.10:8080</code>) and register once.</div>
-  <p class="version">Version <span id="v">…</span> · installed copies update themselves ·
-    by installing ClinicNest you accept the <a href="licence.html">licence terms</a></p>
-
-  <h2 id="problems">If something goes wrong</h2>
-  <div class="grid">
-    <section>
-      <h3 class="os">Windows</h3>
-      <details id="win-smartscreen"><summary>"Windows protected your PC" <small>– when running ClinicNest_setup.exe</small></summary>
-        <p>The installer is not code-signed yet, so SmartScreen does not know it. Click <em>More info</em>, then <em>Run anyway</em>.
-          The one-command install does not show this warning.</p></details>
-      <details><summary>The download does not start or is blocked</summary>
-        <p>Some office and hospital networks block download sites. The same files are on GitHub:
-          <a href="https://github.com/clinicnest-app/clinic-nest-updates/releases/latest">ClinicNest releases</a>.
-          The one-command install tries both places by itself. Otherwise download on another network (e.g. a phone
-          hotspot) and copy the file over.</p></details>
-      <details><summary>The antivirus warns or removes ClinicNest</summary>
-        <p>New, unsigned programs are sometimes flagged. Restore ClinicNest from the antivirus quarantine and add it as an exception,
-          or use the one-command install (the download is checked against ClinicNest's signature).</p></details>
-      <details><summary>Phones or other computers cannot open ClinicNest</summary>
-        <ol>
-          <li>They must be on the same Wi-Fi / network as the ClinicNest computer – not on mobile data or a guest Wi-Fi.</li>
-          <li>Windows Firewall: open <em>Windows Security → Firewall &amp; network protection → Allow an app through firewall</em>,
-            click <em>Change settings</em> and tick <em>Private</em> for ClinicNest / Java (OpenJDK Platform binary).</li>
-          <li>The Wi-Fi must be set as a <em>Private</em> network (Settings → Network &amp; internet → Wi-Fi → your network).</li>
-          <li>Company security software (e.g. FortiClient, other firewalls) may block incoming connections: ask your IT.</li>
-        </ol></details>
-      <details><summary>"'irm' is not recognized as an internal or external command"</summary>
-        <p>The line was pasted into <em>Command Prompt</em>, not PowerShell. Open <em>Windows PowerShell</em> and paste it there,
-          or use the <em>Command Prompt</em> line shown <a href="#install">above</a> (it starts PowerShell for you).</p></details>
-      <details><summary>"running scripts is disabled on this system"</summary>
-        <p>Paste the command exactly as shown (<code>irm … | iex</code>) – it does not need script execution to be allowed.
-          If your organisation blocks it, use the installer button instead.</p></details>
-      <details><summary>PowerShell says it cannot download</summary>
-        <p>Check the internet connection and try again in a few minutes. Behind a company proxy, use the installer button.</p></details>
-      <details><summary>The browser does not open</summary>
-        <p>Wait 30 seconds after the first start, then open <a href="http://localhost:8080">http://localhost:8080</a> on that computer,
-          or click <em>Open ClinicNest</em> in ClinicNest's window. If another program already uses port 8080, ClinicNest takes
-          the next free one (8081, …) and keeps it – its window shows the address.</p></details>
-    </section>
-
-    <section>
-      <h3 class="os">Mac</h3>
-      <details id="mac-gatekeeper"><summary>"ClinicNest cannot be opened" / "Apple could not verify…" <small>– after the disk image</small></summary>
-        <p>The app is not signed with Apple yet. Open <em>System Settings → Privacy &amp; Security</em>, scroll down and click
-          <em>Open Anyway</em> next to ClinicNest, then confirm. Needed once. The one-command install does not show this message.</p></details>
-      <details><summary>Phones or other computers cannot open ClinicNest</summary>
-        <ol>
-          <li>They must be on the same Wi-Fi as the Mac – not on mobile data or a guest Wi-Fi.</li>
-          <li><em>System Settings → Privacy &amp; Security → Local Network</em>: switch ClinicNest on. (This is what the
-            "find devices on your local network" question sets.)</li>
-          <li>Company security software (e.g. FortiClient) may block incoming connections even when it looks switched off: ask your IT,
-            or quit it while testing.</li>
-          <li>The macOS firewall, if switched on (<em>System Settings → Network → Firewall</em>): allow incoming connections for ClinicNest.</li>
-        </ol></details>
-      <details><summary>The download does not start or is blocked</summary>
-        <p>Some office and hospital networks block download sites. The same files are on GitHub:
-          <a href="https://github.com/clinicnest-app/clinic-nest-updates/releases/latest">ClinicNest releases</a>.
-          The one-command install tries both places by itself.</p></details>
-      <details><summary>"needs Apple silicon" / Intel Mac</summary>
-        <p>ClinicNest for Mac currently runs on Apple silicon (M1 and later) only. Use a Windows PC or a newer Mac for the clinic.</p></details>
-      <details><summary>Terminal says "Not installed: …"</summary>
-        <p>The download could not be checked – it was incomplete or changed on the way. Nothing was installed. Run the command again;
-          if it keeps happening, write to <a href="mailto:support@clinicnest.app">support@clinicnest.app</a>.</p></details>
-      <details><summary>The browser does not open</summary>
-        <p>Wait 30 seconds after the first start, then open <a href="http://localhost:8080">http://localhost:8080</a> on that Mac,
-          or use ClinicNest's menu-bar icon → <em>Open ClinicNest</em>. If another program already uses port 8080, ClinicNest
-          takes the next free one (8081, …) and keeps it – its window shows the address.</p></details>
-    </section>
-  </div>
-
-  <h2 id="server">Server edition <span class="badge" style="color: var(--teal)">new</span></h2>
-  <p class="muted">The same ClinicNest on a <strong>PostgreSQL</strong> database, for clinics with many users at the same
-    time, a dedicated server, or access from outside the clinic with <strong>https</strong>. Two ways to install it: with
-    <strong>Docker</strong> – one command installs ClinicNest, the database and the web server, and the same command
-    updates it later – or with its <strong>own installer</strong> that has the database built in (below).
-    For one clinic PC, the normal installer <a href="#install">above</a> is simpler.</p>
-
-  <div class="grid">
-    <section class="card">
-      <h3 class="os"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h16a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 9h16a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2zm2-6.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm0 9a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>Linux server</h3>
-      <p>Ubuntu, Debian or any Linux with Docker. Docker is installed if missing (the script asks).</p>
-      <div class="label">In a terminal on the server</div>
-      <div class="cmd"><code id="cmd-srv-linux">curl -fsSL https://updates.clinicnest.app/install-server.sh | sudo bash</code><button type="button" data-copy="cmd-srv-linux">Copy</button></div>
-      <p class="or">Data in <code>/opt/clinicnest</code> · 2 GB RAM recommended</p>
-    </section>
-
-    <section class="card">
-      <h3 class="os"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5.5 10.5 4.5v7H3zM11.5 4.4 21 3v8.5h-9.5zM3 12.5h7.5v7L3 18.5zM11.5 12.5H21V21l-9.5-1.4z"/></svg>Windows 10 / 11</h3>
-      <p>With <a href="https://www.docker.com/products/docker-desktop/">Docker Desktop</a> – the script offers to install it.</p>
-      <div class="label">In Command Prompt or PowerShell</div>
-      <div class="cmd"><code id="cmd-srv-win">powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://updates.clinicnest.app/install-server.ps1 | iex"</code><button type="button" data-copy="cmd-srv-win">Copy</button></div>
-      <p class="or">Data in <code>%USERPROFILE%\ClinicNest-Server</code> · 8 GB RAM recommended (4 GB minimum)</p>
-    </section>
-
-    <section class="card">
-      <h3 class="os"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.9-.9-3.1-.8-1.6 0-3.1.9-3.9 2.4-1.7 2.9-.4 7.2 1.2 9.6.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.1.8 1.3 0 2.1-1.2 2.9-2.4.9-1.3 1.3-2.6 1.3-2.7 0 0-2.7-1-2.7-4.1zM14 5.3c.7-.8 1.1-1.9 1-3-1 0-2.1.6-2.8 1.4-.6.7-1.2 1.8-1 2.9 1.1.1 2.1-.5 2.8-1.3z"/></svg>Mac</h3>
-      <p>With <a href="https://www.docker.com/products/docker-desktop/">Docker Desktop</a> installed and opened once.</p>
-      <div class="label">In Terminal</div>
-      <div class="cmd"><code id="cmd-srv-mac">curl -fsSL https://updates.clinicnest.app/install-server.sh | bash</code><button type="button" data-copy="cmd-srv-mac">Copy</button></div>
-      <p class="or">Data in <code>~/ClinicNest-Server</code> · 8 GB RAM recommended (4 GB minimum)</p>
-    </section>
-  </div>
-
-  <div class="grid" style="margin-top: .9rem">
-    <section class="card">
-      <h3>Without Docker: installer with PostgreSQL built in</h3>
-      <p>Like the normal installer – no Docker, no command line. It can run as a background service that starts with
-        the computer, also when nobody is signed in. Installs beside ClinicNest without touching it.</p>
-      <div class="grid" style="margin-top: .8rem; gap: .6rem">
-        <a class="button" href="https://downloads.clinicnest.app/latest/ClinicNest-Server_setup.exe">Windows: ClinicNest-Server_setup.exe<small>Windows 10 / 11 · about 90 MB · asks for administrator rights</small></a>
-        <a class="button" href="https://downloads.clinicnest.app/latest/ClinicNest-Server.dmg">Mac: ClinicNest-Server.dmg<small>Apple silicon · about 95 MB</small></a>
-      </div>
-      <p class="or">Opens at <code>http://&lt;this computer&gt;:8081</code> (the next free port when another program has 8081 –
-        its window shows the address). Mac: <em>Start with the computer…</em> in its window runs it in the background.</p>
-      <div class="label">Or with one command (downloads the same installer and checks it)</div>
-      <p class="muted" style="margin: 0 0 .3rem">Windows (Command Prompt or PowerShell):</p>
-      <div class="cmd"><code id="cmd-srv-win-app">powershell -NoProfile -ExecutionPolicy Bypass -Command "$env:CLINICNEST_EDITION='server'; irm https://updates.clinicnest.app/install.ps1 | iex"</code><button type="button" data-copy="cmd-srv-win-app">Copy</button></div>
-      <p class="muted" style="margin: .5rem 0 .3rem">Mac Terminal:</p>
-      <div class="cmd"><code id="cmd-srv-mac-app">curl -fsSL https://updates.clinicnest.app/install.sh | bash -s server</code><button type="button" data-copy="cmd-srv-mac-app">Copy</button></div>
-      <div class="label">Linux without Docker (Debian / Ubuntu): a service with the system's PostgreSQL</div>
-      <div class="cmd"><code id="cmd-srv-linux-native">curl -fsSL https://updates.clinicnest.app/install-server-linux.sh | sudo bash</code><button type="button" data-copy="cmd-srv-linux-native">Copy</button></div>
-    </section>
-  </div>
-
-  <div class="grid" style="margin-top: .9rem">
-    <section class="card">
-      <h3>During the installation</h3>
-      <ol class="steps">
-        <li>One question: press <kbd>Enter</kbd> to use ClinicNest only on the clinic network, or enter an internet name
-          (e.g. <code>clinic.example.com</code>) for access from outside – a free https certificate is set up by itself.</li>
-        <li>At the end it shows the <em>address</em> to open and a one-time <em>setup code</em>. Keep the code until setup is done:
-          nobody else can set the server up without it.</li>
-      </ol>
-    </section>
-    <section class="card">
-      <h3>Already using ClinicNest on a PC?</h3>
-      <ol class="steps">
-        <li>On the PC: <em>Settings → Backup → Backup now</em>.</li>
-        <li>Copy the backup file into the server's <code>backups</code> folder.</li>
-        <li>On the server's setup screen: <em>Bring its data</em>. Patients, visits, photos, users and passwords come along –
-          everybody signs in as before.</li>
-      </ol>
-    </section>
-  </div>
-
-  <div class="tip"><strong>Good to know:</strong> backups are made by ClinicNest itself into the <code>backups</code> folder –
-    copy it to another place regularly. On Windows and Mac the server runs while Docker Desktop runs: keep the computer on,
-    signed in and awake. Docker Desktop is free for organisations under 250 staff and USD 10 million revenue.
-    Need help with the set-up? <a href="mailto:support@clinicnest.app?subject=Server%20edition">Write to us</a> or ask your IT.</div>
-
-  <h2 id="support">Support this project</h2>
-  <p class="muted">ClinicNest is built with doctors, for small clinics. Here is how to get help – and how to help it grow.</p>
-
-  <div class="grid support">
-    <section class="card">
-      <h3>Getting started</h3>
-      <ol class="steps">
-        <li>Install it on the clinic's main computer (<a href="#install">above</a>).</li>
-        <li>First start: the clinic's details and the doctor's login. Keep the <em>recovery code</em> safe – printed, not on the PC.</li>
-        <li>Settings: letterhead, fees, staff logins, and a <em>backup password</em> with a USB or cloud folder for the extra copy.</li>
-        <li>Other computers and phones: scan the QR code in <em>Settings → Devices</em> and approve them there.</li>
-        <li>Every day: find or register the patient → <em>Start visit</em> → forms, diagnosis, prescription → print → next visit.</li>
-      </ol>
-      <p class="small">Inside ClinicNest: the <em>?</em> icon at the top right.</p>
-    </section>
-
-    <section class="card">
-      <h3>Report a problem</h3>
-      <p>Something does not work? Tell us what you did, what happened, and the ClinicNest version (Settings → About).
-        For errors, attach the file from <em>? → Save logs for support</em> – by email only.</p>
-      <div class="links">
-        <a href="https://github.com/clinicnest-app/feedback/issues/new?template=bug.yml">Report a bug</a>
-        <a href="mailto:support@clinicnest.app?subject=ClinicNest%20problem">Email support</a>
-      </div>
-    </section>
-
-    <section class="card">
-      <h3>Request a feature · share an idea</h3>
-      <p>Missing a form, a print, a report, a specialty? Ideas for making the clinic day easier are just as welcome.</p>
-      <div class="links">
-        <a href="https://github.com/clinicnest-app/feedback/issues/new?template=feature.yml">Request a feature</a>
-        <a href="https://github.com/clinicnest-app/feedback/issues/new?template=feature.yml&amp;title=Idea%3A%20">Share an idea</a>
-      </div>
-    </section>
-
-    <section class="card">
-      <h3>Connect a medical device</h3>
-      <p>Auto-refractometer, tonometer, lensometer, audiometer, tympanometer, ECG, BP monitor, pulse oximeter, glucometer,
-        weighing scale … Tell us the make and model and how it connects (USB, serial cable, network, or exported files),
-        and we look at bringing its readings straight into the visit.</p>
-      <div class="links">
-        <a href="https://github.com/clinicnest-app/feedback/issues/new?template=feature.yml&amp;title=Device%20integration%3A%20">Request a device integration</a>
-      </div>
-    </section>
-
-    <section class="card">
-      <h3>Tell a colleague</h3>
-      <p>The best help is a recommendation: another doctor, a clinic you work with, a hospital OPD.</p>
-      <div class="links">
-        <a id="share-whatsapp" href="https://wa.me/?text=ClinicNest%20%E2%80%93%20free%20patient%20records%20for%20small%20clinics%2C%20on%20the%20clinic%27s%20own%20computer%3A%20https%3A%2F%2Fupdates.clinicnest.app%2F">Share on WhatsApp</a>
-        <a href="mailto:?subject=ClinicNest%20for%20your%20clinic&amp;body=Free%20patient%20records%20for%20small%20clinics%2C%20on%20the%20clinic%27s%20own%20computer%3A%20https%3A%2F%2Fupdates.clinicnest.app%2F">Share by email</a>
-        <button type="button" class="linklike" id="share-copy">Share the link</button>
-      </div>
-    </section>
-
-    <section class="card">
-      <h3>Sponsor a feature</h3>
-      <p>Need something sooner – a specialty, a report, a device, a scheme's forms? A clinic, a group or a company can sponsor
-        it: we agree on what and when, and it becomes part of ClinicNest for every clinic.</p>
-      <div class="links">
-        <a href="mailto:support@clinicnest.app?subject=Sponsor%20a%20feature">Write to us</a>
-      </div>
-    </section>
-
-    <section class="card soon">
-      <h3>Paid support and subscription <span class="badge">coming soon</span></h3>
-      <ul>
-        <li>Priority help by phone, email or WhatsApp</li>
-        <li>Installation and setup done with you, remotely</li>
-        <li>Moving your records from Excel or your old software</li>
-        <li>Training for doctors and staff</li>
-        <li>A hosted server edition for several clinics or branches</li>
-      </ul>
-      <div class="links">
-        <a href="mailto:support@clinicnest.app?subject=Paid%20support%20%E2%80%93%20interested">Tell me when it is available</a>
-      </div>
-    </section>
-  </div>
-
-  <footer>ClinicNest Community Edition · <a href="licence.html">Licence terms</a> ·
-    Feedback and support: <a href="mailto:support@clinicnest.app">support@clinicnest.app</a> or the
-    <a href="https://github.com/clinicnest-app/feedback/issues/new/choose">feedback page</a></footer>
-</main>
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark" data-has-sidebar class="astro-g5ptsecz">
+	<head>
+		<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>ClinicNest – free clinic management software for small clinics | ClinicNest</title><link rel="canonical" href="https://updates.clinicnest.app/"/><link rel="sitemap" href="/sitemap-index.xml"/><script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"ClinicNest Community Edition","applicationCategory":"MedicalApplication","operatingSystem":"Windows 10, Windows 11, macOS (Apple silicon)","description":"Free clinic management software for small clinics: patient records, OPD tokens, eye and ENT forms, prescriptions, follow-ups and receipts. Runs on the clinic's own computer and works without internet.","url":"https://updates.clinicnest.app/","downloadUrl":"https://updates.clinicnest.app/install/","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"},"publisher":{"@type":"Organization","name":"ClinicNest","email":"support@clinicnest.app"}}</script><link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml"/><meta name="generator" content="Astro v7.3.8"/><meta name="generator" content="Starlight v0.42.6"/><meta property="og:title" content="ClinicNest – free clinic management software for small clinics"/><meta property="og:type" content="article"/><meta property="og:url" content="https://updates.clinicnest.app/"/><meta property="og:locale" content="en"/><meta property="og:description" content="ClinicNest Community Edition: free clinic management software for small clinics – patient records, OPD tokens, eye and ENT forms, prescriptions, follow-ups and receipts. Runs on the clinic's own Windows PC or Mac, also without internet."/><meta property="og:site_name" content="ClinicNest"/><meta name="twitter:card" content="summary_large_image"/><meta name="description" content="ClinicNest Community Edition: free clinic management software for small clinics – patient records, OPD tokens, eye and ENT forms, prescriptions, follow-ups and receipts. Runs on the clinic's own Windows PC or Mac, also without internet."/>
+		
+		
 <script>
-  fetch('stable/version.txt').then(r => r.ok ? r.text() : '').then(t => { document.getElementById('v').textContent = t.trim() || 'latest'; })
-    .catch(() => { document.getElementById('v').textContent = 'latest'; });
-  document.getElementById('share-copy').addEventListener('click', async (e) => {
-    const link = 'https://updates.clinicnest.app/';
-    if (navigator.share) { try { await navigator.share({ title: 'ClinicNest', text: 'Free patient records for small clinics', url: link }); return; } catch { /* closed */ } }
-    try { await navigator.clipboard.writeText(link); e.target.textContent = 'Link copied'; } catch { e.target.textContent = link; }
-    setTimeout(() => (e.target.textContent = 'Share the link'), 2500);
-  });
-  document.querySelectorAll('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
-    const text = document.getElementById(b.dataset.copy).textContent;
-    try { await navigator.clipboard.writeText(text); } catch { const r = document.createRange(); r.selectNode(document.getElementById(b.dataset.copy)); getSelection().removeAllRanges(); getSelection().addRange(r); }
-    b.textContent = 'Copied'; setTimeout(() => (b.textContent = 'Copy'), 2000);
-  }));
+	window.StarlightThemeProvider = (() => {
+		const storedTheme =
+			typeof localStorage !== 'undefined' && localStorage.getItem('starlight-theme');
+		const theme =
+			storedTheme ||
+			(window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+		document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+		return {
+			updatePickers(theme = storedTheme || 'auto') {
+				document.querySelectorAll('starlight-theme-select').forEach((picker) => {
+					const select = picker.querySelector('select');
+					if (select) select.value = theme;
+					/** @type {HTMLTemplateElement | null} */
+					const tmpl = document.querySelector(`#theme-icons`);
+					const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
+					if (newIcon) {
+						const oldIcon = picker.querySelector('svg.label-icon');
+						if (oldIcon) {
+							oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+						}
+					}
+				});
+			},
+		};
+	})();
 </script>
-</body>
+
+<template id="theme-icons">
+	<svg aria-hidden="true" class="light astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M5 12a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h1a1 1 0 0 0 1-1Zm.64 5-.71.71a1 1 0 0 0 0 1.41 1 1 0 0 0 1.41 0l.71-.71A1 1 0 0 0 5.64 17ZM12 5a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v1a1 1 0 0 0 1 1Zm5.66 2.34a1 1 0 0 0 .7-.29l.71-.71a1 1 0 1 0-1.41-1.41l-.66.71a1 1 0 0 0 0 1.41 1 1 0 0 0 .66.29Zm-12-.29a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.71-.71a1.004 1.004 0 1 0-1.43 1.41l.73.71ZM21 11h-1a1 1 0 0 0 0 2h1a1 1 0 0 0 0-2Zm-2.64 6A1 1 0 0 0 17 18.36l.71.71a1 1 0 0 0 1.41 0 1 1 0 0 0 0-1.41l-.76-.66ZM12 6.5a5.5 5.5 0 1 0 5.5 5.5A5.51 5.51 0 0 0 12 6.5Zm0 9a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm0 3.5a1 1 0 0 0-1 1v1a1 1 0 0 0 2 0v-1a1 1 0 0 0-1-1Z"/></svg>
+	<svg aria-hidden="true" class="dark astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.64 13a1 1 0 0 0-1.05-.14 8.049 8.049 0 0 1-3.37.73 8.15 8.15 0 0 1-8.14-8.1 8.59 8.59 0 0 1 .25-2A1 1 0 0 0 8 2.36a10.14 10.14 0 1 0 14 11.69 1 1 0 0 0-.36-1.05Zm-9.5 6.69A8.14 8.14 0 0 1 7.08 5.22v.27a10.15 10.15 0 0 0 10.14 10.14 9.784 9.784 0 0 0 2.1-.22 8.11 8.11 0 0 1-7.18 4.32v-.04Z"/></svg>
+	<svg aria-hidden="true" class="auto astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg>
+</template>
+		<link rel="stylesheet" href="/_astro/print.ehPL0gv-.css" media="print">
+	<link rel="stylesheet" href="/_astro/middleware.B8BF1TAf.css">
+<style>@layer starlight.components{.card-grid:where(.astro-7qmvx3iy){grid-template-columns:100%;gap:1rem;display:grid}.card-grid:where(.astro-7qmvx3iy)>*{margin-top:0!important}@media (width>=50rem){.card-grid:where(.astro-7qmvx3iy){grid-template-columns:1fr 1fr;gap:1.5rem}.stagger:where(.astro-7qmvx3iy){--stagger-height:5rem;padding-bottom:var(--stagger-height)}.stagger:where(.astro-7qmvx3iy)>:nth-child(2n){transform:translateY(var(--stagger-height))}}}
+@layer starlight.components{.card:where(.astro-oag6qnet){--sl-card-border:var(--sl-color-purple);--sl-card-bg:var(--sl-color-purple-low);border:1px solid var(--sl-color-gray-5);background-color:var(--sl-color-black);flex-direction:column;gap:clamp(.5rem,.125rem + 1vw,1rem);padding:clamp(1rem,.125rem + 3vw,2.5rem)}.card:where(.astro-oag6qnet):nth-child(4n+1){--sl-card-border:var(--sl-color-orange);--sl-card-bg:var(--sl-color-orange-low)}.card:where(.astro-oag6qnet):nth-child(4n+3){--sl-card-border:var(--sl-color-green);--sl-card-bg:var(--sl-color-green-low)}.card:where(.astro-oag6qnet):nth-child(4n+4){--sl-card-border:var(--sl-color-red);--sl-card-bg:var(--sl-color-red-low)}.card:where(.astro-oag6qnet):nth-child(4n+5){--sl-card-border:var(--sl-color-blue);--sl-card-bg:var(--sl-color-blue-low)}.title:where(.astro-oag6qnet){font-weight:600;font-size:var(--sl-text-h4);color:var(--sl-color-white);line-height:var(--sl-line-height-headings);align-items:center;gap:1rem}.card:where(.astro-oag6qnet) .icon:where(.astro-oag6qnet){border:1px solid var(--sl-card-border);background-color:var(--sl-card-bg);border-radius:.25rem;flex-shrink:0;padding:.2em}.card:where(.astro-oag6qnet) .body:where(.astro-oag6qnet){font-size:clamp(var(--sl-text-sm), calc(.5rem + 1vw), var(--sl-text-body));margin:0}}
+@layer starlight.components{svg:where(.astro-hkc32dio){color:var(--sl-icon-color);font-size:var(--sl-icon-size,1em);width:1em;height:1em;overflow:visible}}
+@layer starlight.components{.sl-link-card:where(.astro-zaaezwya){border:1px solid var(--sl-color-gray-5);box-shadow:var(--sl-shadow-sm);border-radius:.5rem;grid-template-columns:1fr auto;gap:.5rem;padding:1rem;display:grid;position:relative}a:where(.astro-zaaezwya){line-height:var(--sl-line-height-headings);text-decoration:none}a:where(.astro-zaaezwya):before{content:"";position:absolute;inset:0}.stack:where(.astro-zaaezwya){flex-direction:column;gap:.5rem}.title:where(.astro-zaaezwya){color:var(--sl-color-white);font-weight:600;font-size:var(--sl-text-lg)}.description:where(.astro-zaaezwya){color:var(--sl-color-gray-3);line-height:1.5}.icon:where(.astro-zaaezwya){color:var(--sl-color-gray-3)}.sl-link-card:where(.astro-zaaezwya):hover{background:var(--sl-color-gray-7,var(--sl-color-gray-6));border-color:var(--sl-color-gray-2)}.sl-link-card:where(.astro-zaaezwya):hover .icon:where(.astro-zaaezwya){color:var(--sl-color-white)}}
+@layer starlight.components{.sl-steps{--bullet-size:calc(var(--sl-line-height) * 1rem);--bullet-margin:.375rem;counter-reset:steps-counter var(--sl-steps-start,0);padding-inline-start:0;list-style:none}.sl-steps>li{counter-increment:steps-counter;padding-inline-start:calc(var(--bullet-size) + 1rem);min-height:calc(var(--bullet-size) + var(--bullet-margin));padding-bottom:1px;position:relative}.sl-steps>li+li{margin-top:0}.sl-steps>li:before{content:counter(steps-counter);top:0;width:var(--bullet-size);height:var(--bullet-size);line-height:var(--bullet-size);font-size:var(--sl-text-xs);text-align:center;color:var(--sl-color-white);background-color:var(--sl-color-gray-6);box-shadow:inset 0 0 0 1px var(--sl-color-gray-5);border-radius:99rem;font-weight:600;position:absolute;inset-inline-start:0}.sl-steps>li:after{--guide-width:1px;content:"";top:calc(var(--bullet-size) + var(--bullet-margin));bottom:var(--bullet-margin);width:var(--guide-width);background-color:var(--sl-color-hairline-light);position:absolute;inset-inline-start:calc((var(--bullet-size) - var(--guide-width)) / 2)}}@layer starlight.content{.sl-steps>li>:first-child{--lh:calc(1em * var(--sl-line-height));--shift-y:calc(.5 * (var(--bullet-size) - var(--lh)));transform:translateY(var(--shift-y));margin-bottom:var(--shift-y)}.sl-steps>li>:first-child:where(h1,h2,h3,h4,h5,h6){--lh:calc(1em * var(--sl-line-height-headings))}@supports (--prop:1lh){.sl-steps>li>:first-child{--lh:1lh}}}
+</style><script type="module" src="/_astro/page.cNngjUgL.js"></script></head>
+	<body class="astro-g5ptsecz">
+		<a class="sl-skip-link astro-qb7clj6f" href="#_top">Skip to content</a>
+		<div class="page sl-flex astro-yntsjkba">
+	<header class="header astro-yntsjkba"><div class="header astro-by6fddyj">
+	<div class="title-wrapper sl-flex astro-by6fddyj">
+		<button type="button" class="nav-toggle" aria-label="Show or hide the menu" aria-controls="starlight__sidebar" aria-expanded="true">
+  <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <path d="M4 6h16M4 12h16M4 18h16"></path>
+  </svg>
+</button>
+<a href="/" class="site-title sl-flex astro-6rvad3va">
+	
+				<img class="astro-6rvad3va" alt src="/_astro/logo.DUOS91jD.svg" width="256" height="256">
+				
+				
+			
+	<span class="astro-6rvad3va" translate="no">
+		ClinicNest
+	</span>
+</a>
+
+<script>
+  // before the page is drawn: the menu as it was left
+  (() => {
+    try {
+      if (localStorage.getItem('nav-hidden') === '1') document.documentElement.dataset.navHidden = '';
+    } catch {}
+    const button = document.currentScript.parentElement.querySelector('.nav-toggle');
+    const shown = () => !('navHidden' in document.documentElement.dataset);
+    button.setAttribute('aria-expanded', String(shown()));
+    button.addEventListener('click', () => {
+      if (shown()) document.documentElement.dataset.navHidden = '';
+      else delete document.documentElement.dataset.navHidden;
+      button.setAttribute('aria-expanded', String(shown()));
+      try {
+        localStorage.setItem('nav-hidden', shown() ? '0' : '1');
+      } catch {}
+    });
+    // the group of the page that is open is shown open, also when it was closed on the page before
+    document.addEventListener('DOMContentLoaded', () => {
+      let group = document.querySelector('#starlight__sidebar a[aria-current="page"]')?.closest('details');
+      while (group) {
+        group.open = true;
+        group = group.parentElement?.closest('details');
+      }
+    });
+  })();
+</script>
+	</div>
+	<div class="sl-flex print:hidden astro-by6fddyj">
+		<site-search class="astro-by6fddyj astro-b5kgnn7o" data-translations="{&quot;placeholder&quot;:&quot;Search&quot;}">
+	<button data-open-modal disabled aria-label="Search" aria-keyshortcuts="Control+K" class="astro-b5kgnn7o">
+		<svg aria-hidden="true" class="astro-b5kgnn7o astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21.71 20.29 18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg>
+		<span class="sl-hidden md:sl-block astro-b5kgnn7o" aria-hidden="true">Search</span>
+		<kbd class="sl-hidden md:sl-flex astro-b5kgnn7o" style="display: none;">
+			<kbd class="astro-b5kgnn7o">Ctrl</kbd><kbd class="astro-b5kgnn7o">K</kbd>
+		</kbd>
+	</button>
+
+	<dialog style="padding:0" aria-label="Search" class="astro-b5kgnn7o">
+		<div class="dialog-frame sl-flex astro-b5kgnn7o">
+			
+			<button data-close-modal class="sl-flex md:sl-hidden astro-b5kgnn7o">
+				Cancel
+			</button>
+			<div class="search-container astro-b5kgnn7o">
+						<div id="starlight__search" class="astro-b5kgnn7o"></div>
+					</div>
+		</div>
+	</dialog>
+</site-search>
+
+
+<script>
+	(() => {
+		const openBtn = document.querySelector('button[data-open-modal]');
+		const shortcut = openBtn?.querySelector('kbd');
+		if (!openBtn || !(shortcut instanceof HTMLElement)) return;
+		const platformKey = shortcut.querySelector('kbd');
+		if (platformKey && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+			platformKey.textContent = '⌘';
+			openBtn.setAttribute('aria-keyshortcuts', 'Meta+K');
+		}
+		shortcut.style.display = '';
+	})();
+</script>
+
+<script type="module" src="/_astro/Search.astro_astro_type_script_index_0_lang.g9hoxVJg.js"></script>
+	</div>
+	<div class="sl-hidden md:sl-flex print:hidden right-group astro-by6fddyj">
+		<div class="sl-flex social-icons astro-by6fddyj">
+			
+		</div>
+		<starlight-theme-select>
+	
+	<label style="--sl-select-width: 6.25em" class="astro-2z5xp7gb">
+	<span class="sr-only astro-2z5xp7gb">Select theme</span>
+	<svg aria-hidden="true" class="icon label-icon astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg>
+	<select autocomplete="off" class="astro-2z5xp7gb">
+		<option value="dark" class="astro-2z5xp7gb">Dark</option><option value="light" class="astro-2z5xp7gb">Light</option><option value="auto" selected class="astro-2z5xp7gb">Auto</option>
+	</select>
+	<svg aria-hidden="true" class="icon caret astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg>
+</label>
+</starlight-theme-select>
+
+
+<script>
+	StarlightThemeProvider.updatePickers();
+</script>
+
+<script type="module">var e=`starlight-theme`,t=e=>e===`auto`||e===`dark`||e===`light`?e:`auto`,n=()=>t(typeof localStorage<`u`&&localStorage.getItem(e));function r(t){typeof localStorage<`u`&&localStorage.setItem(e,t===`light`||t===`dark`?t:``)}var i=()=>matchMedia(`(prefers-color-scheme: light)`).matches?`light`:`dark`;function a(e){StarlightThemeProvider.updatePickers(e),document.documentElement.dataset.theme=e===`auto`?i():e,r(e)}matchMedia(`(prefers-color-scheme: light)`).addEventListener(`change`,()=>{n()===`auto`&&a(`auto`)});var o=class extends HTMLElement{constructor(){super(),a(n()),this.querySelector(`select`)?.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&a(t(e.currentTarget.value))})}};customElements.define(`starlight-theme-select`,o);</script>
+		
+
+<script type="module">var e=class extends HTMLElement{constructor(){super();let e=this.querySelector(`select`);e&&(e.addEventListener(`change`,e=>{e.currentTarget instanceof HTMLSelectElement&&(window.location.pathname=e.currentTarget.value)}),window.addEventListener(`pageshow`,t=>{if(!t.persisted)return;let n=e.querySelector(`option[selected]`)?.index;n!==e.selectedIndex&&(e.selectedIndex=n??0)}))}};customElements.define(`starlight-lang-select`,e);</script>
+	</div>
+</div></header>
+	<nav class="sidebar print:hidden astro-yntsjkba" aria-label="Main">
+				<button popovertarget="starlight__sidebar" class="sl-menu-button sl-flex md:sl-hidden print:hidden astro-r2osgdlg">
+	<svg aria-hidden="true" class="open-menu astro-r2osgdlg astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M3 8h18a1 1 0 1 0 0-2H3a1 1 0 0 0 0 2Zm18 8H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Zm0-5H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Z"/></svg>
+	<svg aria-hidden="true" class="close-menu astro-r2osgdlg astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="m13.41 12 6.3-6.29a1.004 1.004 0 1 0-1.42-1.42L12 10.59l-6.29-6.3a1.004 1.004 0 0 0-1.42 1.42l6.3 6.29-6.3 6.29a1 1 0 0 0 0 1.42.998.998 0 0 0 1.42 0l6.29-6.3 6.29 6.3a.999.999 0 0 0 1.42 0 1 1 0 0 0 0-1.42L13.41 12Z"/></svg>
+	<span class="sr-only astro-r2osgdlg">Menu</span>
+</button>
+				<script type="module">var e=class extends HTMLElement{constructor(){super();let e=matchMedia(`(min-width: 50em)`),t=()=>{this.popover=e.matches?null:`auto`};t(),e.addEventListener(`change`,()=>t()),this.addEventListener(`toggle`,({newState:e})=>this.trapFocus(e===`open`))}trapFocus(e){document.querySelectorAll(`.main-frame, .sl-skip-link`).forEach(t=>{t.toggleAttribute(`inert`,e)})}};customElements.define(`sl-sidebar-pane`,e);</script><sl-sidebar-pane popover id="starlight__sidebar" class="sidebar-pane astro-yntsjkba">
+					<div class="sidebar-content sl-flex astro-yntsjkba">
+						<sl-sidebar-state-persist data-hash="06nfj2m" class="astro-ipdry5cl">
+	<script aria-hidden="true">
+		(() => {
+			try {
+				if (!matchMedia('(min-width: 50em)').matches) return;
+				/** @type {HTMLElement | null} */
+				const target = document.querySelector('sl-sidebar-state-persist');
+				const state = JSON.parse(sessionStorage.getItem('sl-sidebar-state') || '0');
+				if (!target || !state || target.dataset.hash !== state.hash) return;
+				window._starlightScrollRestore = state.scroll;
+				customElements.define(
+					'sl-sidebar-restore',
+					class SidebarRestore extends HTMLElement {
+						connectedCallback() {
+							try {
+								const idx = parseInt(this.dataset.index || '');
+								const details = this.closest('details');
+								if (details && typeof state.open[idx] === 'boolean') details.open = state.open[idx];
+							} catch {}
+						}
+					}
+				);
+			} catch {}
+		})();
+	</script>
+	<ul class="top-level astro-rmhv4bp6">
+	<li class="astro-rmhv4bp6">
+				<a href="/" aria-current="page" class="large astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">ClinicNest</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/specialties/" class="large astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Specialty forms</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<details class="astro-rmhv4bp6">
+						<summary class="astro-rmhv4bp6">
+							<span class="group-label astro-rmhv4bp6">
+								<span class="large astro-rmhv4bp6">Desktop edition</span>
+								
+							</span>
+							<svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg>
+						</summary>
+						<sl-sidebar-restore data-index="0"></sl-sidebar-restore>
+						<ul class="astro-rmhv4bp6">
+	<li class="astro-rmhv4bp6">
+				<a href="/install/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Installation guide</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/install/windows/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Install on Windows</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/install/mac/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Install on a Mac</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/problems/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">If something goes wrong</span>
+						
+					</a>
+			</li>
+</ul>
+					</details>
+			</li><li class="astro-rmhv4bp6">
+				<details class="astro-rmhv4bp6">
+						<summary class="astro-rmhv4bp6">
+							<span class="group-label astro-rmhv4bp6">
+								<span class="large astro-rmhv4bp6">Server edition</span>
+								
+							</span>
+							<svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg>
+						</summary>
+						<sl-sidebar-restore data-index="1"></sl-sidebar-restore>
+						<ul class="astro-rmhv4bp6">
+	<li class="astro-rmhv4bp6">
+				<a href="/server-edition/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Installation guide</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/server-edition/linux/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Install on Linux</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/server-edition/windows/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Install on Windows</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/server-edition/mac/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Install on a Mac</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/server-edition/setup/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">During the installation</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/server-edition/move/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Move from the desktop edition</span>
+						
+					</a>
+			</li>
+</ul>
+					</details>
+			</li><li class="astro-rmhv4bp6">
+				<details class="astro-rmhv4bp6">
+						<summary class="astro-rmhv4bp6">
+							<span class="group-label astro-rmhv4bp6">
+								<span class="large astro-rmhv4bp6">Guides</span>
+								
+							</span>
+							<svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg>
+						</summary>
+						<sl-sidebar-restore data-index="2"></sl-sidebar-restore>
+						<ul class="astro-rmhv4bp6">
+	<li class="astro-rmhv4bp6">
+				<a href="/guide/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">About the guides</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<details class="astro-rmhv4bp6">
+						<summary class="astro-rmhv4bp6">
+							<span class="group-label astro-rmhv4bp6">
+								<span class="large astro-rmhv4bp6">User guide</span>
+								
+							</span>
+							<svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg>
+						</summary>
+						<sl-sidebar-restore data-index="3"></sl-sidebar-restore>
+						<ul class="astro-rmhv4bp6">
+	<li class="astro-rmhv4bp6">
+				<a href="/guide/user/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">About the user guide</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/user/sign-in/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Sign in and switch user</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/user/patients/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Find or register a patient</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/user/opd/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Today&#39;s OPD and tokens</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/user/visit/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Record a visit</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/user/diagnosis-prescription/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Diagnosis and prescription</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/user/photos-documents/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Photos and documents</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/user/charges/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Charges and receipts</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/user/prints/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Prints</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/user/follow-ups/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Follow-ups</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/user/reminders/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Remind patients of a visit</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/user/phone/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">On a phone or tablet</span>
+						
+					</a>
+			</li>
+</ul>
+					</details>
+			</li><li class="astro-rmhv4bp6">
+				<details class="astro-rmhv4bp6">
+						<summary class="astro-rmhv4bp6">
+							<span class="group-label astro-rmhv4bp6">
+								<span class="large astro-rmhv4bp6">Admin guide</span>
+								
+							</span>
+							<svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg>
+						</summary>
+						<sl-sidebar-restore data-index="4"></sl-sidebar-restore>
+						<ul class="astro-rmhv4bp6">
+	<li class="astro-rmhv4bp6">
+				<a href="/guide/admin/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">About the admin guide</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/admin/setup/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Set up the clinic</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/admin/clinic/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Clinic details and letterhead</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/admin/fees/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Fees</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/admin/users/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Users and roles</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/admin/devices/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Other computers and phones</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<details class="astro-rmhv4bp6">
+						<summary class="astro-rmhv4bp6">
+							<span class="group-label astro-rmhv4bp6">
+								<span class="large astro-rmhv4bp6">SMS reminders</span>
+								
+							</span>
+							<svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg>
+						</summary>
+						<sl-sidebar-restore data-index="5"></sl-sidebar-restore>
+						<ul class="astro-rmhv4bp6">
+	<li class="astro-rmhv4bp6">
+				<a href="/guide/admin/sms/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Choose how to send SMS</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/admin/sms/own-sms-app/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Option 1: the device&#39;s own SMS app</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/admin/sms/android-phone/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Option 2: an Android phone of the clinic</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/admin/sms/provider/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Option 3: an SMS provider (DLT)</span>
+						
+					</a>
+			</li>
+</ul>
+					</details>
+			</li><li class="astro-rmhv4bp6">
+				<details class="astro-rmhv4bp6">
+						<summary class="astro-rmhv4bp6">
+							<span class="group-label astro-rmhv4bp6">
+								<span class="large astro-rmhv4bp6">WhatsApp reminders</span>
+								
+							</span>
+							<svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg>
+						</summary>
+						<sl-sidebar-restore data-index="6"></sl-sidebar-restore>
+						<ul class="astro-rmhv4bp6">
+	<li class="astro-rmhv4bp6">
+				<a href="/guide/admin/whatsapp/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Choose how to send WhatsApp</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/admin/whatsapp/own-whatsapp/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Option 1: WhatsApp on the device</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/admin/whatsapp/business-platform/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Option 2: WhatsApp Business Platform</span>
+						
+					</a>
+			</li>
+</ul>
+					</details>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/admin/automatic-reminders/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Send reminders automatically</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/admin/backup/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Backup and restore</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/admin/audit/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Audit log</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/guide/admin/about/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Version, updates and support</span>
+						
+					</a>
+			</li>
+</ul>
+					</details>
+			</li>
+</ul>
+					</details>
+			</li><li class="astro-rmhv4bp6">
+				<details class="astro-rmhv4bp6">
+						<summary class="astro-rmhv4bp6">
+							<span class="group-label astro-rmhv4bp6">
+								<span class="large astro-rmhv4bp6">Support this project</span>
+								
+							</span>
+							<svg aria-hidden="true" class="caret astro-rmhv4bp6 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.25rem;"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg>
+						</summary>
+						<sl-sidebar-restore data-index="7"></sl-sidebar-restore>
+						<ul class="astro-rmhv4bp6">
+	<li class="astro-rmhv4bp6">
+				<a href="/support/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Ways to get and give help</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/support/problem/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Report a problem</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/support/feature/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Request a feature</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/support/device/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Connect a medical device</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/support/share/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Tell a colleague</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/support/sponsor/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Sponsor a feature</span>
+						
+					</a>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/support/paid/" class="astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Paid support</span>
+						
+					</a>
+			</li>
+</ul>
+					</details>
+			</li><li class="astro-rmhv4bp6">
+				<a href="/licence/" class="large astro-rmhv4bp6">
+						<span class="astro-rmhv4bp6">Licence terms</span>
+						
+					</a>
+			</li>
+</ul>
+
+
+	<script aria-hidden="true">
+		(() => {
+			const scroller = document.getElementById('starlight__sidebar');
+			if (!window._starlightScrollRestore || !scroller) return;
+			scroller.scrollTop = window._starlightScrollRestore;
+			delete window._starlightScrollRestore;
+		})();
+	</script></sl-sidebar-state-persist>
+
+<div class="md:sl-hidden">
+	<div class="mobile-preferences sl-flex astro-p4azlveh">
+	<div class="social-icons astro-p4azlveh">
+		
+	</div>
+	<starlight-theme-select>
+	
+	<label style="--sl-select-width: 6.25em" class="astro-2z5xp7gb">
+	<span class="sr-only astro-2z5xp7gb">Select theme</span>
+	<svg aria-hidden="true" class="icon label-icon astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M21 14h-1V7a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v7H3a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-2a1 1 0 0 0-1-1ZM6 7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7H6V7Zm14 10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1h16v1Z"/></svg>
+	<select autocomplete="off" class="astro-2z5xp7gb">
+		<option value="dark" class="astro-2z5xp7gb">Dark</option><option value="light" class="astro-2z5xp7gb">Light</option><option value="auto" selected class="astro-2z5xp7gb">Auto</option>
+	</select>
+	<svg aria-hidden="true" class="icon caret astro-2z5xp7gb astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1em;"><path d="M17 9.17a1 1 0 0 0-1.41 0L12 12.71 8.46 9.17a1 1 0 1 0-1.41 1.42l4.24 4.24a1.002 1.002 0 0 0 1.42 0L17 10.59a1.002 1.002 0 0 0 0-1.42Z"/></svg>
+</label>
+</starlight-theme-select>
+
+
+<script>
+	StarlightThemeProvider.updatePickers();
+</script>
+
+
+	
+
+
+</div>
+</div>
+					</div>
+				</sl-sidebar-pane>
+			</nav>
+	<div class="main-frame astro-yntsjkba">
+			
+			<script type="module">var e=document.getElementById(`starlight__sidebar`),t=e?.querySelector(`sl-sidebar-state-persist`),n=`sl-sidebar-state`,r=()=>{let r=[],i=t?.dataset.hash||``;try{let e=sessionStorage.getItem(n),t=JSON.parse(e||`{}`);Array.isArray(t.open)&&t.hash===i&&(r=t.open)}catch{}return{hash:i,open:r,scroll:e?.scrollTop||0}},i=e=>{try{sessionStorage.setItem(n,JSON.stringify(e))}catch{}},a=()=>i(r()),o=(e,t)=>{let n=r();n.open[t]=e,i(n)};t?.addEventListener(`click`,e=>{if(!(e.target instanceof Element))return;let t=e.target.closest(`summary`)?.closest(`details`);if(!t)return;let n=t.querySelector(`sl-sidebar-restore`),r=parseInt(n?.dataset.index||``);isNaN(r)||o(!t.open,r)}),addEventListener(`visibilitychange`,()=>{document.visibilityState===`hidden`&&a()});</script><div class="lg:sl-flex astro-lrzkfocr">
+	
+	<div class="main-pane astro-lrzkfocr">
+				
+				<main data-pagefind-body class="astro-g5ptsecz" lang="en" dir="ltr">
+					
+					
+					
+								<div class="content-panel astro-a7po4psb">
+	<div class="sl-container astro-a7po4psb">
+									<h1 id="_top" class="astro-bebwqqxs">ClinicNest – free clinic management software for small clinics</h1>
+									</div>
+</div>
+								<div class="content-panel astro-a7po4psb">
+	<div class="sl-container astro-a7po4psb">
+									<div class="sl-markdown-content">
+										
+
+  <p>
+    <span class="sl-badge note medium astro-f4zorn72">Community Edition · free</span>
+  </p>
+  <p>Free clinic management software for small clinics: patient records, OPD, prescriptions and follow-ups.
+    It runs on the clinic's own computer, works without internet, and keeps the data in the clinic.</p>
+  <p class="home-actions">
+    <a class="sl-link-button not-content primary astro-dcqstdaq" href="/install/">
+	
+	Installation guide
+	<svg aria-hidden="true" class="astro-dcqstdaq astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg>
+</a>
+    <a class="sl-link-button not-content minimal astro-dcqstdaq" href="/support/">
+	
+	Support this project
+	<svg aria-hidden="true" class="astro-dcqstdaq astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M20.16 5A6.29 6.29 0 0 0 12 4.36a6.27 6.27 0 0 0-8.16 9.48l6.21 6.22a2.78 2.78 0 0 0 3.9 0l6.21-6.22a6.27 6.27 0 0 0 0-8.84m-1.41 7.46-6.21 6.21a.76.76 0 0 1-1.08 0l-6.21-6.24a4.29 4.29 0 0 1 0-6 4.27 4.27 0 0 1 6 0 1 1 0 0 0 1.42 0 4.27 4.27 0 0 1 6 0 4.29 4.29 0 0 1 .08 6Z"/></svg>
+</a>
+  </p>
+  <p class="home-note">Windows 10 / 11 · Mac with Apple silicon</p>
+
+  <section class="screens not-content" aria-roledescription="carousel" aria-label="Screenshots of ClinicNest">
+  <div class="screens-track" tabindex="0">
+    <figure class="screens-slide" aria-roledescription="slide" aria-label="1 of 7">
+        
+<img src="/_astro/opd-all.C1tE_urD_1mWpn8.webp" srcset="/_astro/opd-all.C1tE_urD_1ywtOe.webp 800w, /_astro/opd-all.C1tE_urD_1AmLH3.webp 1200w, /_astro/opd-all.C1tE_urD_1mWpn8.webp 1600w" alt="Today's OPD: tokens, who is waiting, who has been seen" sizes="(min-width: 72rem) 45rem, 92vw" loading="eager" decoding="async" width="1600" height="1000">
+        <figcaption>Today&#39;s OPD: tokens, who is waiting, who has been seen</figcaption>
+      </figure><figure class="screens-slide" aria-roledescription="slide" aria-label="2 of 7">
+        
+<img src="/_astro/patients-search.22w47QiG_ZP8eFb.webp" srcset="/_astro/patients-search.22w47QiG_gt19v.webp 800w, /_astro/patients-search.22w47QiG_1oXlp8.webp 1200w, /_astro/patients-search.22w47QiG_ZP8eFb.webp 1600w" alt="Find a patient by name, ID or phone" sizes="(min-width: 72rem) 45rem, 92vw" loading="lazy" decoding="async" width="1600" height="1000">
+        <figcaption>Find a patient by name, ID or phone</figcaption>
+      </figure><figure class="screens-slide" aria-roledescription="slide" aria-label="3 of 7">
+        
+<img src="/_astro/patient-page.BqGFCRge_Z1e1xT5.webp" srcset="/_astro/patient-page.BqGFCRge_Z2npo4c.webp 800w, /_astro/patient-page.BqGFCRge_2wN38u.webp 1200w, /_astro/patient-page.BqGFCRge_Z1e1xT5.webp 1600w" alt="A patient's page: visits, and the values over time" sizes="(min-width: 72rem) 45rem, 92vw" loading="lazy" decoding="async" width="1600" height="1000">
+        <figcaption>A patient&#39;s page: visits, and the values over time</figcaption>
+      </figure><figure class="screens-slide" aria-roledescription="slide" aria-label="4 of 7">
+        
+<img src="/_astro/visit.BYkxvVuz_YV1Js.webp" srcset="/_astro/visit.BYkxvVuz_2k1Lw4.webp 800w, /_astro/visit.BYkxvVuz_Zqm5dY.webp 1200w, /_astro/visit.BYkxvVuz_YV1Js.webp 1600w" alt="A visit: vitals and the eye examination" sizes="(min-width: 72rem) 45rem, 92vw" loading="lazy" decoding="async" width="1600" height="1000">
+        <figcaption>A visit: vitals and the eye examination</figcaption>
+      </figure><figure class="screens-slide" aria-roledescription="slide" aria-label="5 of 7">
+        
+<img src="/_astro/form-eye-exam.BgOzLhR8_Z1jj5Rs.webp" srcset="/_astro/form-eye-exam.BgOzLhR8_Z1FqBsh.webp 800w, /_astro/form-eye-exam.BgOzLhR8_Z2vgYMR.webp 1200w, /_astro/form-eye-exam.BgOzLhR8_Z1jj5Rs.webp 1600w" alt="A specialty form: the eye examination" sizes="(min-width: 72rem) 45rem, 92vw" loading="lazy" decoding="async" width="1600" height="1000">
+        <figcaption>A specialty form: the eye examination</figcaption>
+      </figure><figure class="screens-slide" aria-roledescription="slide" aria-label="6 of 7">
+        
+<img src="/_astro/reminders.BRUAHxKC_Z2abU50.webp" srcset="/_astro/reminders.BRUAHxKC_1NNsao.webp 800w, /_astro/reminders.BRUAHxKC_Z1ST2T2.webp 1200w, /_astro/reminders.BRUAHxKC_Z2abU50.webp 1600w" alt="Day-before reminders by call, WhatsApp or SMS" sizes="(min-width: 72rem) 45rem, 92vw" loading="lazy" decoding="async" width="1600" height="1000">
+        <figcaption>Day-before reminders by call, WhatsApp or SMS</figcaption>
+      </figure><figure class="screens-slide" aria-roledescription="slide" aria-label="7 of 7">
+        
+<img src="/_astro/follow-ups-calendar.B6JupQ-d_2crtfY.webp" srcset="/_astro/follow-ups-calendar.B6JupQ-d_tJHmB.webp 800w, /_astro/follow-ups-calendar.B6JupQ-d_20GVPc.webp 1200w, /_astro/follow-ups-calendar.B6JupQ-d_2crtfY.webp 1600w" alt="Follow-ups in a calendar" sizes="(min-width: 72rem) 45rem, 92vw" loading="lazy" decoding="async" width="1600" height="1000">
+        <figcaption>Follow-ups in a calendar</figcaption>
+      </figure>
+  </div>
+  <div class="screens-bar">
+    <button type="button" class="screens-arrow" data-step="-1" aria-label="Previous picture">‹</button>
+    <div class="screens-dots">
+      <button type="button" class="screens-dot" data-go="0" aria-label="Picture 1: Today's OPD: tokens, who is waiting, who has been seen" aria-current="true"></button><button type="button" class="screens-dot" data-go="1" aria-label="Picture 2: Find a patient by name, ID or phone"></button><button type="button" class="screens-dot" data-go="2" aria-label="Picture 3: A patient's page: visits, and the values over time"></button><button type="button" class="screens-dot" data-go="3" aria-label="Picture 4: A visit: vitals and the eye examination"></button><button type="button" class="screens-dot" data-go="4" aria-label="Picture 5: A specialty form: the eye examination"></button><button type="button" class="screens-dot" data-go="5" aria-label="Picture 6: Day-before reminders by call, WhatsApp or SMS"></button><button type="button" class="screens-dot" data-go="6" aria-label="Picture 7: Follow-ups in a calendar"></button>
+    </div>
+    <button type="button" class="screens-arrow" data-step="1" aria-label="Next picture">›</button>
+  </div>
+</section>
+
+<script type="module">document.querySelectorAll(`.screens`).forEach(e=>{let t=e.querySelector(`.screens-track`),n=[...e.querySelectorAll(`.screens-slide`)],r=[...e.querySelectorAll(`.screens-dot`)],i=0,a=(e,r=!0)=>{i=(e+n.length)%n.length,t.scrollTo({left:n[i].offsetLeft-t.offsetLeft,behavior:r?`smooth`:`auto`})},o=new IntersectionObserver(e=>{for(let t of e)t.isIntersecting&&(i=n.indexOf(t.target),r.forEach((e,t)=>t===i?e.setAttribute(`aria-current`,`true`):e.removeAttribute(`aria-current`)))},{root:t,threshold:.6});n.forEach(e=>o.observe(e));let s,c=()=>{s&&clearInterval(s),s=void 0};matchMedia(`(prefers-reduced-motion: reduce)`).matches||(s=window.setInterval(()=>a(i+1),5e3)),[`pointerdown`,`keydown`,`wheel`,`touchstart`].forEach(t=>e.addEventListener(t,c,{passive:!0})),e.querySelectorAll(`.screens-arrow`).forEach(e=>e.addEventListener(`click`,()=>a(i+Number(e.dataset.step)))),r.forEach(e=>e.addEventListener(`click`,()=>a(Number(e.dataset.go)))),t.addEventListener(`keydown`,e=>{e.key===`ArrowRight`&&a(i+1),e.key===`ArrowLeft`&&a(i-1)})});</script>
+
+  <h2 id="includes">What the Community Edition includes</h2>  <ul class="home-features">
+    <li><a href="/guide/user/patients/">Patients</a><span>Registration, quick search by name, phone or ID, and each patient&#39;s visits and results over time.</span></li><li><a href="/guide/user/opd/">OPD queue</a><span>Today&#39;s patients with daily token numbers: waiting, seen, and scheduled follow-ups.</span></li><li><a href="/specialties/">Specialty forms</a><span>Eye clinic and ENT clinic forms (examination, refraction, audiometry, procedure notes), plus vitals and visit notes.</span></li><li><a href="/guide/user/diagnosis-prescription/">Diagnosis and prescription</a><span>ICD-10 diagnoses, a medicine list with usual doses, and printed prescriptions on your letterhead.</span></li><li><a href="/guide/user/photos-documents/">Photos and documents</a><span>Take photos with the phone&#39;s camera during the visit; add reports and old prescriptions as PDF.</span></li><li><a href="/guide/user/reminders/">Follow-ups and reminders</a><span>Next-visit dates, a calendar, and day-before reminders by call, SMS or WhatsApp through the clinic&#39;s own provider account.</span></li><li><a href="/guide/user/charges/">Charges and receipts</a><span>Fees, discounts, payments by cash, UPI or card, printed receipts and the day&#39;s collection.</span></li><li><a href="/guide/admin/devices/">Whole clinic, one computer</a><span>Installed on one PC; reception, consulting room and phones open it in the browser. Only devices the doctor approved get in.</span></li><li><a href="/guide/admin/backup/">Your data stays with you</a><span>Daily automatic backups, encrypted with your backup password, and no cloud account.</span></li>
+  </ul>
+
+  <h2 id="next">Where to go next</h2>
+  <div class="card-grid astro-7qmvx3iy">
+    <div class="sl-link-card astro-zaaezwya">
+	<span class="sl-flex stack astro-zaaezwya">
+		<a href="/install/" class="astro-zaaezwya">
+			<span class="title astro-zaaezwya">Installation guide</span>
+		</a>
+		<span class="description astro-zaaezwya">The desktop edition, on one Windows PC or Mac in the clinic: one command, or the installer.</span>
+	</span>
+	<svg aria-hidden="true" class="icon rtl:flip astro-zaaezwya astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.333em;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg>
+</div>
+    <div class="sl-link-card astro-zaaezwya">
+	<span class="sl-flex stack astro-zaaezwya">
+		<a href="/problems/" class="astro-zaaezwya">
+			<span class="title astro-zaaezwya">If something goes wrong</span>
+		</a>
+		<span class="description astro-zaaezwya">Warnings from Windows or the Mac, blocked downloads, phones that cannot connect.</span>
+	</span>
+	<svg aria-hidden="true" class="icon rtl:flip astro-zaaezwya astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.333em;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg>
+</div>
+    <div class="sl-link-card astro-zaaezwya">
+	<span class="sl-flex stack astro-zaaezwya">
+		<a href="/server-edition/" class="astro-zaaezwya">
+			<span class="title astro-zaaezwya">Server edition</span>
+		</a>
+		<span class="description astro-zaaezwya">For many users, a dedicated server, or access from outside the clinic.</span>
+	</span>
+	<svg aria-hidden="true" class="icon rtl:flip astro-zaaezwya astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.333em;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg>
+</div>
+    <div class="sl-link-card astro-zaaezwya">
+	<span class="sl-flex stack astro-zaaezwya">
+		<a href="/guide/" class="astro-zaaezwya">
+			<span class="title astro-zaaezwya">Guides</span>
+		</a>
+		<span class="description astro-zaaezwya">How to use ClinicNest day by day, and how to set it up.</span>
+	</span>
+	<svg aria-hidden="true" class="icon rtl:flip astro-zaaezwya astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.333em;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg>
+</div>
+    <div class="sl-link-card astro-zaaezwya">
+	<span class="sl-flex stack astro-zaaezwya">
+		<a href="/support/" class="astro-zaaezwya">
+			<span class="title astro-zaaezwya">Support this project</span>
+		</a>
+		<span class="description astro-zaaezwya">Get help, report a problem, ask for a feature, tell a colleague.</span>
+	</span>
+	<svg aria-hidden="true" class="icon rtl:flip astro-zaaezwya astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.333em;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg>
+</div>
+    <div class="sl-link-card astro-zaaezwya">
+	<span class="sl-flex stack astro-zaaezwya">
+		<a href="/licence/" class="astro-zaaezwya">
+			<span class="title astro-zaaezwya">Licence terms</span>
+		</a>
+		<span class="description astro-zaaezwya">The terms of the free Community Edition.</span>
+	</span>
+	<svg aria-hidden="true" class="icon rtl:flip astro-zaaezwya astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.333em;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg>
+</div>
+  </div>
+
+  <p class="home-note">ClinicNest Community Edition · <a href="/licence/">Licence terms</a> · Feedback and support:
+    <a href="mailto:support@clinicnest.app">support@clinicnest.app</a> or the
+    <a href="https://github.com/clinicnest-app/feedback/issues/new/choose">feedback page</a></p>
+
+									</div>
+									<footer class="sl-flex astro-ddtxxk7k">
+	<div class="meta sl-flex astro-ddtxxk7k">
+		
+		
+	</div>
+	<div class="pagination-links print:hidden astro-b5raizh3" dir="ltr">
+	
+	<a href="/specialties/" rel="next" class="astro-b5raizh3">
+				<svg aria-hidden="true" class="astro-b5raizh3 astro-hkc32dio" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="--sl-icon-size: 1.5rem;"><path d="M17.92 11.62a1.001 1.001 0 0 0-.21-.33l-5-5a1.003 1.003 0 1 0-1.42 1.42l3.3 3.29H7a1 1 0 0 0 0 2h7.59l-3.3 3.29a1.002 1.002 0 0 0 .325 1.639 1 1 0 0 0 1.095-.219l5-5a1 1 0 0 0 .21-.33 1 1 0 0 0 0-.76Z"/></svg>
+				<span class="astro-b5raizh3">
+					Next
+					<br class="astro-b5raizh3">
+					<span class="link-title astro-b5raizh3">Specialty forms</span>
+				</span>
+			</a>
+</div>
+
+	
+</footer>
+								</div>
+</div>
+							
+				</main>
+			</div>
+</div>
+		</div>
+</div>
+	</body>
 </html>
+
+<script type="module">var e={"#install":`/install/`,"#problems":`/problems/`,"#server":`/server-edition/`,"#support":`/support/`,"#win-smartscreen":`/problems/#win-smartscreen`,"#mac-gatekeeper":`/problems/#mac-gatekeeper`};e[location.hash]&&location.replace(e[location.hash]);</script>
