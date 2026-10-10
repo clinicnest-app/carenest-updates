@@ -1,0 +1,43 @@
+# Lives in the UPDATES repository, on its "installer" branch. The Release workflow of the source repository
+# pushes that branch (this file, the installers, SHA256SUMS(.sig), version.txt, notes.txt); this workflow then
+# turns it into a GitHub Release, so the installers have permanent public addresses:
+#   https://github.com/<owner>/clinic-nest-updates/releases/latest/download/ClinicNest_setup.exe
+#   https://github.com/<owner>/clinic-nest-updates/releases/latest/download/ClinicNest.dmg
+#   https://github.com/<owner>/clinic-nest-updates/releases/latest/download/ClinicNest-Server_setup.exe
+#   https://github.com/<owner>/clinic-nest-updates/releases/latest/download/ClinicNest-Server.dmg
+# GitHub refuses files of 100 MB and more in a branch: those arrive split (<name>.part-aa, -ab, …) and are joined
+# here, then checked against SHA256SUMS before anything is published.
+# Kept here (not under .github/workflows of the source repository) so it only ever runs in the updates repository.
+name: Publish installer
+
+on:
+  push:
+    branches: [installer]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="$(cat version.txt)"
+          FILES=""
+          for f in ClinicNest_setup.exe ClinicNest.dmg ClinicNest-intel.dmg ClinicNest-linux.tar.gz ClinicNest-Server_setup.exe ClinicNest-Server.dmg ClinicNest-Server-intel.dmg ClinicNest-Server-linux.zip; do
+            if ls "$f".part-* > /dev/null 2>&1; then cat "$f".part-* > "$f" && rm "$f".part-*; fi
+            if [ -f "$f" ]; then FILES="$FILES $f"; fi
+          done
+          # the joined files must be exactly what the source workflow signed
+          if [ -f SHA256SUMS ]; then
+            sha256sum -c SHA256SUMS
+            FILES="$FILES SHA256SUMS SHA256SUMS.sig"
+          fi
+          # publishing the same version again replaces its installers
+          gh release delete "v$VERSION" --yes --cleanup-tag || true
+          gh release create "v$VERSION" $FILES \
+            --title "ClinicNest $VERSION" --notes-file notes.txt --latest --target gh-pages
